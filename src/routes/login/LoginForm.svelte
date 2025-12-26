@@ -3,16 +3,22 @@
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
 	import UserCredentials from "$lib/components/UserCredentials.svelte";
 	import { loggedInUser } from "$lib/runes.svelte";
+	import { service } from "$lib/services/service";
 
 	let email = $state("");
 	let password = $state("");
 	let notification = $state("");
 
 	async function login() {
-		const success = true;
+		let session = await service.login(email, password);
 
-		if (success) {
+		if (session) {
+			loggedInUser.name = session.name;
 			loggedInUser.email = email;
+			loggedInUser.role = session.role;
+			loggedInUser.token = session.token;
+			loggedInUser._id = session._id;
+
 			goto("/");
 		} else {
 			email = "";
@@ -26,8 +32,10 @@
 	<ErrorNotification {notification} />
 {/if}
 <div>
-	<UserCredentials bind:email bind:password />
-	<button onclick={() => login()} class="btn btn-primary w-100 p-2">
-		<strong>Log In</strong>
-	</button>
+	<form on:submit|preventDefault={login}>
+		<UserCredentials bind:email bind:password />
+		<button type="submit" class="btn btn-primary w-100 p-2">
+			<strong>Log In</strong>
+		</button>
+	</form>
 </div>

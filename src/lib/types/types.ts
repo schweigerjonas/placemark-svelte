@@ -1,5 +1,6 @@
 export type Session = {
 	name: string;
+	role: Role;
 	token: string;
 	_id: string;
 };
