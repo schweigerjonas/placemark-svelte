@@ -2,17 +2,21 @@
 	import { goto } from "$app/navigation";
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
 	import UserCredentials from "$lib/components/UserCredentials.svelte";
+	import { loggedInUser } from "$lib/runes.svelte";
 
 	let email = $state("");
 	let password = $state("");
 	let notification = $state("");
 
 	async function login() {
-		const success = false;
+		const success = true;
 
 		if (success) {
+			loggedInUser.email = email;
 			goto("/");
 		} else {
+			email = "";
+			password = "";
 			notification = "Invalid email or password.";
 		}
 	}

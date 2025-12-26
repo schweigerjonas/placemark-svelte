@@ -28,6 +28,6 @@
 	<UserDetails bind:firstName bind:lastName />
 	<UserCredentials bind:email bind:password />
 	<button onclick={() => signUp()} class="btn btn-primary w-100 p-2">
-		<strong>Account erstellen</strong>
+		<strong>Create Account</strong>
 	</button>
 </div>
