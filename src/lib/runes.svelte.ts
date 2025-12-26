@@ -1,1 +1,7 @@
-export const loggedInUser = $state({ email: "" });
+export const loggedInUser = $state({
+	name: "",
+	email: "",
+	role: "",
+	token: "",
+	_id: ""
+});
