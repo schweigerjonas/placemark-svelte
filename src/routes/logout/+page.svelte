@@ -7,6 +7,7 @@
 	loggedInUser.role = "";
 	loggedInUser.token = "";
 	loggedInUser._id = "";
+	localStorage.removeItem("placemarkSession");
 
 	goto("/");
 </script>

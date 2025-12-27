@@ -2,6 +2,19 @@
 	import "./layout.css";
 	import favicon from "$lib/assets/favicon.svg";
 	import { loggedInUser } from "$lib/runes.svelte";
+	import { browser } from "$app/environment";
+
+	if (browser) {
+		const savedLoggedInUser = localStorage.placemarkSession;
+		if (savedLoggedInUser) {
+			const session = JSON.parse(savedLoggedInUser);
+			loggedInUser.name = session.name;
+			loggedInUser.email = session.email;
+			loggedInUser.role = session.role;
+			loggedInUser.token = session.token;
+			loggedInUser._id = session._id;
+		}
+	}
 
 	let { children } = $props();
 </script>
@@ -15,7 +28,10 @@
 			<span class="font-bold">Placemark</span>
 		</a>
 
-		<div class="flex justify-end">
+		<div class="flex items-center justify-end">
+			{#if loggedInUser.role === "ADMIN"}
+				<a href="/admin-dashboard" class="btn btn-light">Admin Dashboard</a>
+			{/if}
 			{#if loggedInUser.email}
 				<div class="dropdown">
 					<button

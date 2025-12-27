@@ -19,6 +19,8 @@
 			loggedInUser.token = session.token;
 			loggedInUser._id = session._id;
 
+			localStorage.placemarkSession = JSON.stringify(loggedInUser);
+
 			goto("/");
 		} else {
 			email = "";
@@ -32,7 +34,7 @@
 	<ErrorNotification {notification} />
 {/if}
 <div>
-	<form on:submit|preventDefault={login}>
+	<form onsubmit={login}>
 		<UserCredentials bind:email bind:password />
 		<button type="submit" class="btn btn-primary w-100 p-2">
 			<strong>Log In</strong>
