@@ -11,10 +11,12 @@ export enum Role {
 }
 
 export type User = {
-	fistName: string;
+	firstName: string;
 	lastName: string;
 	email: string;
 	password: string;
 	role: Role;
 	_id: string;
 };
+
+export type UserInfo = Omit<User, "_id">;

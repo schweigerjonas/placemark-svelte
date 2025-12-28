@@ -1,14 +1,14 @@
 import axios from "axios";
-import type { Session, User } from "$lib/types/types";
+import type { Session, UserInfo } from "$lib/types/types";
 
 export const service = {
 	baseUrl: "http://localhost:3000",
 
-	async signup(user: User): Promise<boolean> {
+	async signup(user: UserInfo): Promise<boolean> {
 		try {
 			const res = await axios.post(`${this.baseUrl}/api/users`, user);
 
-			return res.data.success === true;
+			return res.request.status === 201;
 		} catch (err) {
 			console.error(err);
 
