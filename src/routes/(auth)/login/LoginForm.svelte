@@ -2,7 +2,6 @@
 	import { goto } from "$app/navigation";
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
 	import UserCredentials from "$lib/components/UserCredentials.svelte";
-	import { loggedInUser } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
 
 	let email = $state("");
@@ -13,14 +12,6 @@
 		let session = await service.login(email, password);
 
 		if (session) {
-			loggedInUser.name = session.name;
-			loggedInUser.email = email;
-			loggedInUser.role = session.role;
-			loggedInUser.token = session.token;
-			loggedInUser._id = session._id;
-
-			localStorage.placemarkSession = JSON.stringify(loggedInUser);
-
 			goto("/");
 		} else {
 			email = "";

@@ -1,13 +1,8 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { loggedInUser } from "$lib/runes.svelte";
+	import { service } from "$lib/services/service";
 
-	loggedInUser.name = "";
-	loggedInUser.email = "";
-	loggedInUser.role = "";
-	loggedInUser.token = "";
-	loggedInUser._id = "";
-	localStorage.removeItem("placemarkSession");
+	service.clearSession();
 
 	goto("/");
 </script>
