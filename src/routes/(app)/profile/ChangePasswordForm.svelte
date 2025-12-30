@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
-	import { loggedInUser } from "$lib/runes.svelte";
+	import { currentUser, loggedInUser } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
 	import type { UserInfo } from "$lib/types/types";
-
-	let { user } = $props();
 
 	let oldPassword = $state("");
 	let newPassword = $state("");
@@ -13,7 +11,7 @@
 	let notification = $state("");
 
 	async function updatePassword() {
-		if (oldPassword !== user.password) {
+		if (oldPassword !== currentUser.password) {
 			notification = "Wrong password or invalid session.";
 			oldPassword = "";
 			newPassword = "";

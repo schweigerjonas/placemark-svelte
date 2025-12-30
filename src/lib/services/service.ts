@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { Session, User, UserInfo } from "$lib/types/types";
-import { loggedInUser } from "$lib/runes.svelte";
+import { currentUser, loggedInUser } from "$lib/runes.svelte";
 
 export const service = {
 	baseUrl: "http://localhost:3000",
@@ -37,6 +37,18 @@ export const service = {
 		localStorage.removeItem("placemarkSession");
 	},
 
+	async refreshCurrentUser() {
+		const user = await this.getUser(loggedInUser._id);
+
+		if (user) {
+			currentUser.firstName = user.firstName;
+			currentUser.lastName = user.lastName;
+			currentUser.email = user.email;
+			currentUser.password = user.password;
+			currentUser.role = user.role;
+		}
+	},
+
 	async signup(user: UserInfo): Promise<boolean> {
 		try {
 			const res = await axios.post(`${this.baseUrl}/api/users`, user);
@@ -64,6 +76,7 @@ export const service = {
 				};
 
 				this.saveSession(session, email);
+				this.refreshCurrentUser();
 
 				return session;
 			}
@@ -96,7 +109,13 @@ export const service = {
 		try {
 			const res = await axios.put(`${this.baseUrl}/api/users/${id}`, updateDetails);
 
-			return res.request.status === 201;
+			if (res.request.status === 201) {
+				this.refreshCurrentUser();
+
+				return true;
+			}
+
+			return false;
 		} catch (err) {
 			console.error(err);
 

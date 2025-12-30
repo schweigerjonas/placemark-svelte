@@ -5,3 +5,11 @@ export const loggedInUser = $state({
 	token: "",
 	_id: ""
 });
+
+export const currentUser = $state({
+	firstName: "",
+	lastName: "",
+	email: "",
+	password: "",
+	role: ""
+});
