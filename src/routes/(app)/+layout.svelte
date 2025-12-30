@@ -39,6 +39,8 @@
 	</div>
 </nav>
 
-<div class="m-3">
-	{@render children()}
+<div class="flex justify-center">
+	<div class="flex w-9/12 flex-col">
+		{@render children()}
+	</div>
 </div>
