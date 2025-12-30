@@ -25,6 +25,6 @@
 			placeholder="Last Name"
 			required
 		/>
-		<label for="first-name">Last Name</label>
+		<label for="last-name">Last Name</label>
 	</div>
 </div>
