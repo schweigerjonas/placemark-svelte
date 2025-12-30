@@ -1,3 +1,22 @@
+<script lang="ts">
+	import { goto } from "$app/navigation";
+	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
+	import { loggedInUser } from "$lib/runes.svelte";
+	import { service } from "$lib/services/service";
+
+	let notification = $state("");
+
+	async function deleteAccount() {
+		let deleted = await service.deleteAccount(loggedInUser._id);
+
+		if (deleted) {
+			goto("/logout");
+		} else {
+			notification = "Something went wrong.";
+		}
+	}
+</script>
+
 <div class="flex flex-col gap-5">
 	<div>
 		<h5>Security</h5>
@@ -36,6 +55,9 @@
 		</h5>
 		<hr />
 		<p>Once you delete your account, there is no going back.</p>
-		<button class="btn btn-danger">Delete account</button>
+		<button onclick={() => deleteAccount()} class="btn btn-danger">Delete account</button>
+		{#if notification}
+			<ErrorNotification {notification} />
+		{/if}
 	</div>
 </div>

@@ -73,5 +73,17 @@ export const service = {
 			console.error(err);
 			return null;
 		}
+	},
+
+	async deleteAccount(id: string): Promise<boolean> {
+		try {
+			const res = await axios.delete(`${this.baseUrl}/api/users/${id}`);
+
+			return res.request.status === 204;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
 	}
 };
