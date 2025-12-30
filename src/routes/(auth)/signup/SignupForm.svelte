@@ -34,10 +34,10 @@
 {#if notification}
 	<ErrorNotification {notification} />
 {/if}
-<div>
+<form onsubmit={signup}>
 	<UserDetails bind:firstName bind:lastName />
 	<UserCredentials bind:email bind:password />
-	<button onclick={() => signup()} class="btn btn-primary w-100 p-2">
+	<button type="submit" class="btn btn-primary w-100 p-2">
 		<strong>Create Account</strong>
 	</button>
-</div>
+</form>
