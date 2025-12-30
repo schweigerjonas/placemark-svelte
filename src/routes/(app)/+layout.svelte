@@ -23,13 +23,26 @@
 						aria-expanded="false"
 					>
 						<div class="dropdown-toggle flex items-center justify-center gap-1.5">
-							<span class="material-symbols-outlined"> account_circle </span>
 							<span>{loggedInUser.email}</span>
 						</div>
 					</button>
 					<ul class="dropdown-menu dropdown-menu-end">
-						<li><a class="dropdown-item" href="/profile">Profile</a></li>
-						<li><a class="dropdown-item" href="/logout">Logout</a></li>
+						<li>
+							<a class="dropdown-item" href="/profile">
+								<div class="flex items-center gap-2">
+									<span class="material-symbols-outlined">account_circle</span>
+									<span>Profile</span>
+								</div>
+							</a>
+						</li>
+						<li>
+							<a class="dropdown-item" href="/logout">
+								<div class="flex items-center gap-2">
+									<span class="material-symbols-outlined">logout</span>
+									<span>Logout</span>
+								</div>
+							</a>
+						</li>
 					</ul>
 				</div>
 			{:else}
@@ -40,7 +53,7 @@
 </nav>
 
 <div class="flex justify-center">
-	<div class="flex w-9/12 flex-col">
+	<div class="flex w-7xl flex-col py-3">
 		{@render children()}
 	</div>
 </div>
