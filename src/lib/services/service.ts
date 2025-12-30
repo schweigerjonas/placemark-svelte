@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Session, UserInfo } from "$lib/types/types";
+import type { Session, User, UserInfo } from "$lib/types/types";
 import { loggedInUser } from "$lib/runes.svelte";
 
 export const service = {
@@ -71,7 +71,36 @@ export const service = {
 			return null;
 		} catch (err) {
 			console.error(err);
+
 			return null;
+		}
+	},
+
+	async getUser(id: string): Promise<User | null> {
+		try {
+			const res = await axios.get(`${this.baseUrl}/api/users/${id}`);
+
+			if (res.request.status === 200) {
+				return res.data;
+			}
+
+			return null;
+		} catch (err) {
+			console.error(err);
+
+			return null;
+		}
+	},
+
+	async updateUser(id: string, updateDetails: UserInfo): Promise<boolean> {
+		try {
+			const res = await axios.put(`${this.baseUrl}/api/users/${id}`, updateDetails);
+
+			return res.request.status === 201;
+		} catch (err) {
+			console.error(err);
+
+			return false;
 		}
 	},
 
