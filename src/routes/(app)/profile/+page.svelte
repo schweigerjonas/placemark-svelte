@@ -3,12 +3,6 @@
 	import ProfileInformation from "./ProfileInformation.svelte";
 	import DeleteAccount from "./DeleteAccount.svelte";
 	import { currentUser } from "$lib/runes.svelte";
-	import { service } from "$lib/services/service";
-	import { onMount } from "svelte";
-
-	onMount(async () => {
-		await service.refreshCurrentUser();
-	});
 </script>
 
 <div class="flex flex-col gap-5">

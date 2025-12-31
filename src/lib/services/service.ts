@@ -2,9 +2,11 @@ import axios from "axios";
 import type { Session, User, UserInfo } from "$lib/types/types";
 import { currentUser, loggedInUser } from "$lib/runes.svelte";
 
-export const service = {
-	baseUrl: "http://localhost:3000",
+const apiClient = axios.create({
+	baseURL: "http://localhost:3000/api"
+});
 
+export const service = {
 	saveSession(session: Session, email: string) {
 		loggedInUser.email = email;
 		loggedInUser.name = session.name;
@@ -25,6 +27,10 @@ export const service = {
 			loggedInUser.role = session.role;
 			loggedInUser.token = session.token;
 			loggedInUser._id = session._id;
+
+			apiClient.defaults.headers.common.Authorization = `Bearer ${session.token}`;
+
+			this.refreshCurrentUser();
 		}
 	},
 
@@ -34,6 +40,7 @@ export const service = {
 		loggedInUser.role = "";
 		loggedInUser.token = "";
 		loggedInUser._id = "";
+		delete apiClient.defaults.headers.common.Authorization;
 		localStorage.removeItem("placemarkSession");
 	},
 
@@ -51,7 +58,7 @@ export const service = {
 
 	async signup(user: UserInfo): Promise<boolean> {
 		try {
-			const res = await axios.post(`${this.baseUrl}/api/users`, user);
+			const res = await apiClient.post("/users", user);
 
 			return res.request.status === 201;
 		} catch (err) {
@@ -63,10 +70,10 @@ export const service = {
 
 	async login(email: string, password: string): Promise<Session | null> {
 		try {
-			const res = await axios.post(`${this.baseUrl}/api/users/authenticate`, { email, password });
+			const res = await apiClient.post("/users/authenticate", { email, password });
 
 			if (res.data.success) {
-				axios.defaults.headers.common.Authorization = `Bearer ${res.data.token}`;
+				apiClient.defaults.headers.common.Authorization = `Bearer ${res.data.token}`;
 
 				const session: Session = {
 					name: res.data.name,
@@ -91,7 +98,7 @@ export const service = {
 
 	async getUser(id: string): Promise<User | null> {
 		try {
-			const res = await axios.get(`${this.baseUrl}/api/users/${id}`);
+			const res = await apiClient.get(`/users/${id}`);
 
 			if (res.request.status === 200) {
 				return res.data;
@@ -107,7 +114,7 @@ export const service = {
 
 	async updateUser(id: string, updateDetails: UserInfo): Promise<boolean> {
 		try {
-			const res = await axios.put(`${this.baseUrl}/api/users/${id}`, updateDetails);
+			const res = await apiClient.put(`/users/${id}`, updateDetails);
 
 			if (res.request.status === 201) {
 				this.refreshCurrentUser();
@@ -125,7 +132,7 @@ export const service = {
 
 	async deleteAccount(id: string): Promise<boolean> {
 		try {
-			const res = await axios.delete(`${this.baseUrl}/api/users/${id}`);
+			const res = await apiClient.delete(`/users/${id}`);
 
 			return res.request.status === 204;
 		} catch (err) {
