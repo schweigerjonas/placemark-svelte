@@ -1,3 +1,5 @@
+import { ToastType, type ToastData } from "./types/types";
+
 export const loggedInUser = $state({
 	name: "",
 	email: "",
@@ -13,3 +15,9 @@ export const currentUser = $state({
 	password: "",
 	role: ""
 });
+
+export const toastData = $state({
+	message: "",
+	type: ToastType.Success,
+	visible: false
+} as ToastData);

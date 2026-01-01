@@ -20,3 +20,15 @@ export type User = {
 };
 
 export type UserInfo = Omit<User, "_id">;
+
+export enum ToastType {
+	Success = "success",
+	Danger = "danger",
+	Info = "info"
+}
+
+export type ToastData = {
+	message: string;
+	type: ToastType;
+	visible: boolean;
+};
