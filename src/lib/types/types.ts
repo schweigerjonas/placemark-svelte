@@ -15,6 +15,7 @@ export type User = {
 	lastName: string;
 	email: string;
 	password: string;
+	currentPassword?: string;
 	role: Role;
 	_id: string;
 };

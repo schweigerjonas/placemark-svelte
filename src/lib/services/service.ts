@@ -51,7 +51,6 @@ export const service = {
 			currentUser.firstName = user.firstName;
 			currentUser.lastName = user.lastName;
 			currentUser.email = user.email;
-			currentUser.password = user.password;
 			currentUser.role = user.role;
 		}
 	},
@@ -119,6 +118,22 @@ export const service = {
 			if (res.request.status === 201) {
 				this.refreshCurrentUser();
 
+				return true;
+			}
+
+			return false;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
+	async updateUserPassword(id: string, updateDetails: UserInfo): Promise<boolean> {
+		try {
+			const res = await apiClient.put(`/users/${id}/password`, updateDetails);
+
+			if (res.request.status === 201) {
 				return true;
 			}
 

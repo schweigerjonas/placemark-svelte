@@ -12,7 +12,6 @@ export const currentUser = $state({
 	firstName: "",
 	lastName: "",
 	email: "",
-	password: "",
 	role: ""
 });
 
