@@ -52,8 +52,39 @@
 	</div>
 </nav>
 
-<div class="flex justify-center">
+<main class="flex flex-1 justify-center">
 	<div class="flex w-7xl flex-col py-3">
 		{@render children()}
 	</div>
-</div>
+</main>
+
+<footer class="bg-body-tertiary px-3 py-2">
+	<div class="flex items-center justify-center gap-2">
+		<span>© 2026 Placemark</span>
+		<div class="vr"></div>
+		<div class="flex items-center gap-2">
+			<a
+				href="https://github.com/schweigerjonas/placemark-svelte"
+				target="_blank"
+				rel="noopener noreferrer"
+				class=""
+			>
+				<div class="flex items-center gap-1.5">
+					<i class="bi bi-github"></i>
+					<span class="text-xs">Frontend</span>
+				</div>
+			</a>
+			<a
+				href="https://github.com/schweigerjonas/placemark-core"
+				target="_blank"
+				rel="noopener noreferrer"
+				class=""
+			>
+				<div class="flex items-center gap-1.5">
+					<i class="bi bi-github"></i>
+					<span class="text-xs">Backend</span>
+				</div>
+			</a>
+		</div>
+	</div>
+</footer>
