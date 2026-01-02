@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
-	import { currentUser, loggedInUser } from "$lib/runes.svelte";
+	import { currentUser, loggedInUser, toastData } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
-	import type { UserInfo } from "$lib/types/types";
+	import { ToastType, type UserInfo } from "$lib/types/types";
 
 	let oldPassword = $state("");
 	let newPassword = $state("");
@@ -34,6 +34,10 @@
 		} as UserInfo);
 
 		if (updated) {
+			toastData.message = "Password updated.";
+			toastData.type = ToastType.Success;
+			toastData.visible = true;
+
 			oldPassword = "";
 			newPassword = "";
 			confirmPassword = "";
