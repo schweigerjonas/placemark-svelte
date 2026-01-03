@@ -67,7 +67,7 @@
 				href="https://github.com/schweigerjonas/placemark-svelte"
 				target="_blank"
 				rel="noopener noreferrer"
-				class=""
+				class="footer-link"
 			>
 				<div class="flex items-center gap-1.5">
 					<i class="bi bi-github"></i>
@@ -78,7 +78,7 @@
 				href="https://github.com/schweigerjonas/placemark-core"
 				target="_blank"
 				rel="noopener noreferrer"
-				class=""
+				class="footer-link"
 			>
 				<div class="flex items-center gap-1.5">
 					<i class="bi bi-github"></i>
