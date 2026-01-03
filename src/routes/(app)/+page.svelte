@@ -1,4 +1,11 @@
-<h1>Welcome to SvelteKit</h1>
-<p>
-	Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation
-</p>
+<script lang="ts">
+	import LeafletMap from "$lib/components/LeafletMap.svelte";
+</script>
+
+<div class="p-3">
+	<h1>Welcome to Placemark</h1>
+
+	<div>
+		<LeafletMap height={60} />
+	</div>
+</div>
