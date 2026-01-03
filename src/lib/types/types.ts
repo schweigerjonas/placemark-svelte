@@ -22,6 +22,25 @@ export type User = {
 
 export type UserInfo = Omit<User, "_id">;
 
+export type Location = {
+	lat: string;
+	lng: string;
+};
+
+export type Image = {
+	url: string;
+	publicID: string;
+};
+
+export type PointOfInterest = {
+	name: string;
+	description: string;
+	location: Location;
+	img: Image;
+	categoryID: string;
+	_id: string;
+};
+
 export enum ToastType {
 	Success = "success",
 	Danger = "danger",

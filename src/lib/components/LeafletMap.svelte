@@ -16,7 +16,24 @@
 	// let control: Control.Layers;
 	let overlays: Control.LayersObject = {};
 	let baseLayers: Control.LayersObject;
-	// let L: any;
+	let L: typeof import("/home/jonas/repos/placemark-svelte/node_modules/@types/leaflet/index");
+
+	export async function addMarker(lat: number, lng: number, popupText: string) {
+		const leaflet = await import("leaflet");
+		L = leaflet.default;
+		const marker = L.marker([lat, lng]).addTo(map);
+		const popup = L.popup({ closeOnClick: false });
+
+		popup.setContent(popupText);
+		marker.bindPopup(popup);
+	}
+
+	export async function moveTo(lat: number, lng: number) {
+		const leaflet = await import("leaflet");
+		L = leaflet.default;
+
+		map.flyTo({ lat: lat, lng: lng });
+	}
 
 	onMount(async () => {
 		const leaflet = await import("leaflet");
