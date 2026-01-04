@@ -38,7 +38,7 @@
 		// save POI data for the current marker
 		markerData.set(marker, data);
 
-		popup.setContent(popupText);
+		popup.setContent(`<p>${popupText}</p><a href="/details/${data._id}">(click for details)</a>`);
 		marker.bindPopup(popup);
 
 		marker.on("popupopen", (e) => {
@@ -54,6 +54,10 @@
 			toastData.message = "Something went wrong.";
 			toastData.type = ToastType.Danger;
 			toastData.visible = true;
+		});
+		marker.on("popupclose", () => {
+			currentPOI.focused = false;
+			currentPOI.poi = {} as PointOfInterest;
 		});
 	}
 
@@ -93,4 +97,4 @@
 	});
 </script>
 
-<div {id} class="box" style="height: {height}vh"></div>
+<div {id} style="height: {height}vh; width: auto"></div>
