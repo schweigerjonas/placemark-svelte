@@ -1,4 +1,4 @@
-import { ToastType, type ToastData } from "./types/types";
+import { ToastType, type PointOfInterest, type ToastData } from "./types/types";
 
 export const loggedInUser = $state({
 	name: "",
@@ -20,3 +20,8 @@ export const toastData = $state({
 	type: ToastType.Success,
 	visible: false
 } as ToastData);
+
+export const currentPOI = $state({
+	focused: false,
+	poi: {} as PointOfInterest
+});

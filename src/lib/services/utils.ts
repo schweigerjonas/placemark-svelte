@@ -8,7 +8,7 @@ export async function refreshMap(map: LeafletMap) {
 	const pois = await service.getAllPOIs();
 
 	pois.forEach((poi: PointOfInterest) => {
-		map.addMarker(+poi.location.lat, +poi.location.lng, poi.name);
+		map.addMarker(+poi.location.lat, +poi.location.lng, poi.name, poi);
 	});
 
 	const lastPOI = pois[pois.length - 1];
