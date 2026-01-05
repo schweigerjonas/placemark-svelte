@@ -19,6 +19,10 @@
 	</div>
 	<div class="card-body flex flex-col gap-2">
 		<div class="flex grow flex-col items-start gap-3">
+			<div class="flex gap-1">
+				<span class="font-bold">Category:</span>
+				<span>{selectedMarker.spec.category}</span>
+			</div>
 			<div class="flex items-center gap-1">
 				<span class="font-bold">Geolocation:</span>
 				<div class="flex items-center py-1 text-xs">
