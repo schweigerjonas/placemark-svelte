@@ -1,60 +1,13 @@
 import axios from "axios";
 import type { Category, PointOfInterest, Session, User, UserInfo } from "$lib/types/types";
-import { currentUser, loggedInUser } from "$lib/runes.svelte";
+import { saveSession } from "./session-utils";
+import { refreshCurrentUser } from "./utils";
 
-const apiClient = axios.create({
+export const apiClient = axios.create({
 	baseURL: "http://localhost:3000/api"
 });
 
 export const service = {
-	saveSession(session: Session, email: string) {
-		loggedInUser.email = email;
-		loggedInUser.name = session.name;
-		loggedInUser.role = session.role;
-		loggedInUser.token = session.token;
-		loggedInUser._id = session._id;
-
-		localStorage.placemarkSession = JSON.stringify(loggedInUser);
-	},
-
-	async restoreSession() {
-		const savedUser = localStorage.placemarkSession;
-
-		if (savedUser) {
-			const session = JSON.parse(savedUser);
-			loggedInUser.email = session.email;
-			loggedInUser.name = session.name;
-			loggedInUser.role = session.role;
-			loggedInUser.token = session.token;
-			loggedInUser._id = session._id;
-
-			apiClient.defaults.headers.common.Authorization = `Bearer ${session.token}`;
-
-			this.refreshCurrentUser();
-		}
-	},
-
-	clearSession() {
-		loggedInUser.email = "";
-		loggedInUser.name = "";
-		loggedInUser.role = "";
-		loggedInUser.token = "";
-		loggedInUser._id = "";
-		delete apiClient.defaults.headers.common.Authorization;
-		localStorage.removeItem("placemarkSession");
-	},
-
-	async refreshCurrentUser() {
-		const user = await this.getUser(loggedInUser._id);
-
-		if (user) {
-			currentUser.firstName = user.firstName;
-			currentUser.lastName = user.lastName;
-			currentUser.email = user.email;
-			currentUser.role = user.role;
-		}
-	},
-
 	async signup(user: UserInfo): Promise<boolean> {
 		try {
 			const res = await apiClient.post("/users", user);
@@ -81,8 +34,8 @@ export const service = {
 					_id: res.data._id
 				};
 
-				this.saveSession(session, email);
-				this.refreshCurrentUser();
+				saveSession(session, email);
+				refreshCurrentUser();
 
 				return session;
 			}
@@ -116,7 +69,7 @@ export const service = {
 			const res = await apiClient.put(`/users/${id}`, updateDetails);
 
 			if (res.request.status === 201) {
-				this.refreshCurrentUser();
+				refreshCurrentUser();
 
 				return true;
 			}
@@ -145,7 +98,7 @@ export const service = {
 		}
 	},
 
-	async deleteAccount(id: string): Promise<boolean> {
+	async deleteUser(id: string): Promise<boolean> {
 		try {
 			const res = await apiClient.delete(`/users/${id}`);
 

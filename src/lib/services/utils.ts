@@ -1,10 +1,22 @@
 import type LeafletMap from "$lib/components/LeafletMap.svelte";
-import { loggedInUser } from "$lib/runes.svelte";
+import { currentUser, loggedInUser } from "$lib/runes.svelte";
 import type { Category, MarkerLayer, MarkerSpec, PointOfInterest } from "$lib/types/types";
 import { service } from "./service";
+import { restoreSession } from "./session-utils";
+
+export async function refreshCurrentUser() {
+	const user = await service.getUser(loggedInUser._id);
+
+	if (user) {
+		currentUser.firstName = user.firstName;
+		currentUser.lastName = user.lastName;
+		currentUser.email = user.email;
+		currentUser.role = user.role;
+	}
+}
 
 export async function refreshMap(map: LeafletMap) {
-	if (!loggedInUser.token) service.restoreSession();
+	if (!loggedInUser.token) restoreSession();
 
 	const [pois, categories] = await Promise.all([service.getAllPOIs(), service.getAllCategories()]);
 
