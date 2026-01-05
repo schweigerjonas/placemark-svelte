@@ -4,3 +4,19 @@ html,
 body {
 	height: 100%;
 }
+
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.footer-link {
+	text-decoration: none;
+	color: #212529;
+}
+
+.footer-link:hover {
+	text-decoration: underline;
+	color: #000000;
+}

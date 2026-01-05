@@ -8,7 +8,7 @@
 	let notification = $state("");
 
 	async function deleteAccount() {
-		let deleted = await service.deleteAccount(loggedInUser._id);
+		let deleted = await service.deleteUser(loggedInUser._id);
 
 		if (deleted) {
 			toastData.message = "Account deleted.";

@@ -1,4 +1,4 @@
-import { ToastType, type ToastData } from "./types/types";
+import { ToastType, type MarkerSpec, type PointOfInterest, type ToastData } from "./types/types";
 
 export const loggedInUser = $state({
 	name: "",
@@ -20,3 +20,8 @@ export const toastData = $state({
 	type: ToastType.Success,
 	visible: false
 } as ToastData);
+
+export const selectedMarker = $state({
+	focused: false,
+	spec: {} as MarkerSpec
+});
