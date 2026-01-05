@@ -1,75 +1,89 @@
 <script lang="ts">
 	import "leaflet/dist/leaflet.css";
-	import type { Control, Map as LeafletMap } from "leaflet";
+	import type { Control, Layer, Map as LeafletMap } from "leaflet";
 	import { onMount } from "svelte";
-	import { ToastType, type PointOfInterest } from "$lib/types/types";
+	import { ToastType, type MarkerLayer, type MarkerSpec } from "$lib/types/types";
 	import { SvelteMap } from "svelte/reactivity";
-	import { currentPOI, toastData } from "$lib/runes.svelte";
+	import { selectedMarker, toastData } from "$lib/runes.svelte";
 
-	let { height = 80 } = $props();
-
-	let id = "overview-map";
-	// center of germany
-	let location = { lat: 51.1657, lng: 10.4515 };
-	let zoom = 8;
-	let minZoom = 7;
-	let activeLayer = "Terrain";
+	let {
+		id = "overview-map",
+		height = 80,
+		location = { lat: 51.1657, lng: 10.4515 }, // center of Germany
+		zoom = 8,
+		minZoom = 7,
+		activeLayer = "Terrain",
+		markerLayers = [] as MarkerLayer[]
+	} = $props();
 
 	let map: LeafletMap;
-	// let control: Control.Layers;
+	let control: Control.Layers;
 	let overlays: Control.LayersObject = {};
 	let baseLayers: Control.LayersObject;
 	let L: typeof import("/home/jonas/repos/placemark-svelte/node_modules/@types/leaflet/index");
 
 	// contains POI data for all markers
-	const markerData = new SvelteMap<L.Marker, PointOfInterest>();
+	const markerMap = new SvelteMap<L.Marker, MarkerSpec>();
 
-	export async function addMarker(
-		lat: number,
-		lng: number,
-		popupText: string,
-		data: PointOfInterest
-	) {
-		const leaflet = await import("leaflet");
-		L = leaflet.default;
-		const marker = L.marker([lat, lng]).addTo(map);
+	export async function addMarker(lat: number, lng: number, popupText: string) {
+		const marker = L.marker({ lat, lng }).addTo(map);
 		const popup = L.popup({ closeOnClick: false });
 
-		// save POI data for the current marker
-		markerData.set(marker, data);
-
-		popup.setContent(`<p>${popupText}</p><a href="/details/${data._id}">(click for details)</a>`);
+		popup.setContent(popupText);
 		marker.bindPopup(popup);
-
-		marker.on("popupopen", (e) => {
-			const marker = e.target;
-			const data = markerData.get(marker);
-
-			if (data) {
-				currentPOI.focused = true;
-				currentPOI.poi = data;
-				return;
-			}
-
-			toastData.message = "Something went wrong.";
-			toastData.type = ToastType.Danger;
-			toastData.visible = true;
-		});
-		marker.on("popupclose", () => {
-			currentPOI.focused = false;
-			currentPOI.poi = {} as PointOfInterest;
-		});
 	}
 
 	export async function moveTo(lat: number, lng: number) {
-		const leaflet = await import("leaflet");
-		L = leaflet.default;
-
 		map.flyTo({ lat: lat, lng: lng });
+	}
+
+	export function populateLayer(layer: MarkerLayer) {
+		let group = L.layerGroup([]);
+
+		layer.markerSpecs.forEach((markerSpec) => {
+			let marker = L.marker([+markerSpec.location.lat, +markerSpec.location.lng]);
+			let popup = L.popup({ closeOnClick: false });
+
+			popup.setContent(
+				`<p>${markerSpec.name}</p><a href="/poi/${markerSpec._id}">(click for details)</a>`
+			);
+			marker.bindPopup(popup);
+			marker.bindTooltip(markerSpec.name);
+			marker.addTo(group);
+			markerMap.set(marker, markerSpec);
+
+			marker.on("popupopen", (e) => {
+				const marker = e.target;
+				const spec = markerMap.get(marker);
+
+				if (spec) {
+					selectedMarker.focused = true;
+					selectedMarker.spec = spec;
+					return;
+				}
+
+				toastData.message = "Something went wrong.";
+				toastData.type = ToastType.Danger;
+				toastData.visible = true;
+			});
+			marker.on("popupclose", () => {
+				selectedMarker.focused = false;
+				selectedMarker.spec = {} as MarkerSpec;
+			});
+		});
+
+		addLayer(layer.title, group);
+		control.addOverlay(group, layer.title);
+	}
+
+	function addLayer(title: string, layer: Layer) {
+		overlays[title] = layer;
+		map.addLayer(layer);
 	}
 
 	onMount(async () => {
 		const leaflet = await import("leaflet");
+		L = leaflet.default;
 
 		baseLayers = {
 			Terrain: leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -93,7 +107,13 @@
 			minZoom: minZoom,
 			layers: [defaultLayer]
 		});
-		leaflet.control.layers(baseLayers, overlays).addTo(map);
+		control = leaflet.control.layers(baseLayers, overlays).addTo(map);
+
+		if (markerLayers) {
+			markerLayers.forEach((layer) => {
+				populateLayer(layer);
+			});
+		}
 	});
 </script>
 

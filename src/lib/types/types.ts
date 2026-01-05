@@ -41,6 +41,13 @@ export type PointOfInterest = {
 	_id: string;
 };
 
+export type Category = {
+	title: string;
+	img: Image;
+	userID: string;
+	_id: string;
+};
+
 export enum ToastType {
 	Success = "success",
 	Danger = "danger",
@@ -52,3 +59,16 @@ export type ToastData = {
 	type: ToastType;
 	visible: boolean;
 };
+
+export interface MarkerSpec {
+	_id: string;
+	name: string;
+	description: string;
+	location: Location;
+	category: string;
+}
+
+export interface MarkerLayer {
+	title: string;
+	markerSpecs: MarkerSpec[];
+}

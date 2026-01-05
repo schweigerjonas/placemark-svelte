@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { PointOfInterest, Session, User, UserInfo } from "$lib/types/types";
+import type { Category, PointOfInterest, Session, User, UserInfo } from "$lib/types/types";
 import { currentUser, loggedInUser } from "$lib/runes.svelte";
 
 const apiClient = axios.create({
@@ -160,6 +160,22 @@ export const service = {
 	async getAllPOIs(): Promise<PointOfInterest[]> {
 		try {
 			const res = await apiClient.get("/pois");
+
+			if (res.request.status === 200) {
+				return res.data;
+			}
+
+			return [];
+		} catch (err) {
+			console.error(err);
+
+			return [];
+		}
+	},
+
+	async getAllCategories(): Promise<Category[]> {
+		try {
+			const res = await apiClient.get("/categories");
 
 			if (res.request.status === 200) {
 				return res.data;

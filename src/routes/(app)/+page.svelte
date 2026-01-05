@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
 	import POIDetailCard from "$lib/components/POIDetailCard.svelte";
-	import { currentPOI } from "$lib/runes.svelte";
+	import { selectedMarker } from "$lib/runes.svelte";
 	import { refreshMap } from "$lib/services/utils";
 	import { onMount } from "svelte";
 
@@ -17,7 +17,7 @@
 		<LeafletMap height={80} bind:this={map} />
 	</div>
 	<div class="pr-2">
-		{#if currentPOI.focused}
+		{#if selectedMarker.focused}
 			<POIDetailCard />
 		{/if}
 	</div>

@@ -1,4 +1,4 @@
-import { ToastType, type PointOfInterest, type ToastData } from "./types/types";
+import { ToastType, type MarkerSpec, type PointOfInterest, type ToastData } from "./types/types";
 
 export const loggedInUser = $state({
 	name: "",
@@ -21,7 +21,7 @@ export const toastData = $state({
 	visible: false
 } as ToastData);
 
-export const currentPOI = $state({
+export const selectedMarker = $state({
 	focused: false,
-	poi: {} as PointOfInterest
+	spec: {} as MarkerSpec
 });

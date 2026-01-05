@@ -59,7 +59,7 @@
 </main>
 
 <footer class="bg-body-tertiary px-3">
-	<div class="flex items-center justify-center gap-2">
+	<div class="flex items-center justify-center gap-2 py-3">
 		<span>© 2026 Placemark</span>
 		<div class="vr"></div>
 		<div class="flex items-center gap-2">
