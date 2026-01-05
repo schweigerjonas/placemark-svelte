@@ -1,50 +1,50 @@
 import type LeafletMap from "$lib/components/LeafletMap.svelte";
 import { loggedInUser } from "$lib/runes.svelte";
-import type { MarkerLayer, MarkerSpec, PointOfInterest } from "$lib/types/types";
+import type { Category, MarkerLayer, MarkerSpec, PointOfInterest } from "$lib/types/types";
 import { service } from "./service";
 
 export async function refreshMap(map: LeafletMap) {
 	if (!loggedInUser.token) service.restoreSession();
 
-	const pois = await service.getAllPOIs();
-	const categories = await service.getAllCategories();
+	const [pois, categories] = await Promise.all([service.getAllPOIs(), service.getAllCategories()]);
 
-	// lookup for category titles
-	const categoryMap = new Map(categories.map((c) => [c._id, c.title]));
-
-	const defaultLayer: MarkerLayer = {
-		title: "default",
-		markerSpecs: []
-	};
-
-	const layersByCategory: Record<string, MarkerSpec[]> = {};
-
-	pois.forEach((poi) => {
-		const categoryTitle = categoryMap.get(poi.categoryID) || "No category";
-		const spec = generateMarkerSpec(poi, categoryTitle);
-
-		defaultLayer.markerSpecs.push(spec);
-
-		if (!layersByCategory[categoryTitle]) {
-			layersByCategory[categoryTitle] = [];
-		}
-
-		layersByCategory[categoryTitle].push(spec);
-	});
-
-	const categoryLayers = Object.keys(layersByCategory).map((title) => ({
-		title: title,
-		markerSpecs: layersByCategory[title]
-	}));
-
-	const layers = [defaultLayer, ...categoryLayers];
+	const layers = prepareMarkerLayers(pois, categories);
 
 	layers.forEach((layer) => {
 		map.populateLayer(layer);
 	});
 
-	const lastPOI = pois[pois.length - 1];
-	if (lastPOI) map.moveTo(+lastPOI.location.lat, +lastPOI.location.lng);
+	if (pois.length > 0) {
+		const lastPOI = pois[pois.length - 1];
+		if (lastPOI) map.moveTo(+lastPOI.location.lat, +lastPOI.location.lng);
+	}
+}
+
+function prepareMarkerLayers(pois: PointOfInterest[], categories: Category[]): MarkerLayer[] {
+	// lookup for category titles
+	const categoryMap = new Map(categories.map((c) => [c._id, c.title]));
+
+	const layers: Record<string, MarkerLayer> = {
+		default: {
+			title: "default",
+			markerSpecs: []
+		}
+	};
+
+	pois.forEach((poi) => {
+		const categoryTitle = categoryMap.get(poi.categoryID) || "No category";
+		const spec = generateMarkerSpec(poi, categoryTitle);
+
+		layers["default"].markerSpecs.push(spec);
+
+		if (!layers[categoryTitle]) {
+			layers[categoryTitle] = { title: categoryTitle, markerSpecs: [] };
+		}
+
+		layers[categoryTitle].markerSpecs.push(spec);
+	});
+
+	return Object.values(layers);
 }
 
 function generateMarkerSpec(poi: PointOfInterest, categoryTitle: string): MarkerSpec {
