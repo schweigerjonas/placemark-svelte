@@ -2,14 +2,14 @@
 	import "./layout.css";
 	import favicon from "$lib/assets/favicon.svg";
 	import "bootstrap-icons/font/bootstrap-icons.css";
-	import { service } from "$lib/services/service";
 	import { onMount } from "svelte";
 	import SuccessToast from "$lib/components/SuccessToast.svelte";
+	import { restoreSession } from "$lib/services/session-utils";
 
 	let { children } = $props();
 
 	onMount(async () => {
-		await service.restoreSession();
+		await restoreSession();
 	});
 </script>
 

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { service } from "$lib/services/service";
+	import { clearSession } from "$lib/services/session-utils";
 
-	service.clearSession();
+	clearSession();
 
 	goto("/");
 </script>

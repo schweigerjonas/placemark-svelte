@@ -16,7 +16,7 @@ export async function refreshCurrentUser() {
 }
 
 export async function refreshMap(map: LeafletMap) {
-	if (!loggedInUser.token) restoreSession();
+	if (!loggedInUser.token) await restoreSession();
 
 	const [pois, categories] = await Promise.all([service.getAllPOIs(), service.getAllCategories()]);
 
