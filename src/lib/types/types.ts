@@ -69,6 +69,7 @@ export interface MarkerSpec {
 }
 
 export interface MarkerLayer {
+	isDefault: boolean;
 	title: string;
 	markerSpecs: MarkerSpec[];
 }

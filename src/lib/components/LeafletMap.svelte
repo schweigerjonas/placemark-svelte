@@ -1,6 +1,6 @@
 <script lang="ts">
 	import "leaflet/dist/leaflet.css";
-	import type { Control, Layer, Map as LeafletMap } from "leaflet";
+	import type { Control, Map as LeafletMap } from "leaflet";
 	import { onMount } from "svelte";
 	import { ToastType, type MarkerLayer, type MarkerSpec } from "$lib/types/types";
 	import { SvelteMap } from "svelte/reactivity";
@@ -72,13 +72,12 @@
 			});
 		});
 
-		addLayer(layer.title, group);
+		overlays[layer.title] = group;
 		control.addOverlay(group, layer.title);
-	}
 
-	function addLayer(title: string, layer: Layer) {
-		overlays[title] = layer;
-		map.addLayer(layer);
+		if (layer.isDefault) {
+			group.addTo(map);
+		}
 	}
 
 	onMount(async () => {

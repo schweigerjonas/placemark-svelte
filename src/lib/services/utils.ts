@@ -38,6 +38,7 @@ function prepareMarkerLayers(pois: PointOfInterest[], categories: Category[]): M
 
 	const layers: Record<string, MarkerLayer> = {
 		default: {
+			isDefault: true,
 			title: "default",
 			markerSpecs: []
 		}
@@ -50,7 +51,7 @@ function prepareMarkerLayers(pois: PointOfInterest[], categories: Category[]): M
 		layers["default"].markerSpecs.push(spec);
 
 		if (!layers[categoryTitle]) {
-			layers[categoryTitle] = { title: categoryTitle, markerSpecs: [] };
+			layers[categoryTitle] = { isDefault: false, title: categoryTitle, markerSpecs: [] };
 		}
 
 		layers[categoryTitle].markerSpecs.push(spec);
