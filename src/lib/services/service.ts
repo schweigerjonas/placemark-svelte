@@ -110,6 +110,38 @@ export const service = {
 		}
 	},
 
+	async getAllCategories(): Promise<Category[]> {
+		try {
+			const res = await apiClient.get("/categories");
+
+			if (res.status === 200) {
+				return res.data;
+			}
+
+			return [];
+		} catch (err) {
+			console.error(err);
+
+			return [];
+		}
+	},
+
+	async getCategoryById(id: string): Promise<Category | null> {
+		try {
+			const res = await apiClient.get(`/categories/${id}`);
+
+			if (res.status === 200) {
+				return res.data;
+			}
+
+			return null;
+		} catch (err) {
+			console.error(err);
+
+			return null;
+		}
+	},
+
 	async getAllPOIs(): Promise<PointOfInterest[]> {
 		try {
 			const res = await apiClient.get("/pois");
@@ -126,7 +158,7 @@ export const service = {
 		}
 	},
 
-	async getPOIByID(id: string): Promise<PointOfInterest | null> {
+	async getPOIById(id: string): Promise<PointOfInterest | null> {
 		try {
 			const res = await apiClient.get(`/pois/${id}`);
 			if (res.status === 200) {
@@ -138,22 +170,6 @@ export const service = {
 			console.error(err);
 
 			return null;
-		}
-	},
-
-	async getAllCategories(): Promise<Category[]> {
-		try {
-			const res = await apiClient.get("/categories");
-
-			if (res.status === 200) {
-				return res.data;
-			}
-
-			return [];
-		} catch (err) {
-			console.error(err);
-
-			return [];
 		}
 	}
 };
