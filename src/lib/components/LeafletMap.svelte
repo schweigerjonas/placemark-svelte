@@ -37,7 +37,9 @@
 		map.flyTo({ lat: lat, lng: lng });
 	}
 
-	export function populateLayer(layer: MarkerLayer) {
+	export async function populateLayer(layer: MarkerLayer) {
+		const leaflet = await import("leaflet");
+		L = leaflet.default;
 		let group = L.layerGroup([]);
 
 		layer.markerSpecs.forEach((markerSpec) => {
