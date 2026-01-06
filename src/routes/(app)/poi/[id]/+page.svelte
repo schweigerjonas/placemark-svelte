@@ -2,6 +2,7 @@
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
 	import { refreshMap } from "$lib/services/utils.js";
 	import { onMount } from "svelte";
+	import ImageCarousel from "./ImageCarousel.svelte";
 
 	let { data } = $props();
 
@@ -54,53 +55,7 @@
 			</div>
 		</div>
 		<div class="card w-1/3">
-			<div id="image-carousel" class="carousel slide">
-				<div class="carousel-indicators">
-					<button
-						type="button"
-						data-bs-target="#image-carousel"
-						data-bs-slide-to="0"
-						class="active"
-						aria-current="true"
-						aria-label="Slide 1"
-					></button>
-				</div>
-				<div class="carousel-inner">
-					<div class="carousel-item active flex items-center justify-center">
-						{#if data.poi.img.url}
-							<img
-								src={data.poi.img.url}
-								class="object-contain"
-								alt="Image of {data.category.title}"
-							/>
-						{:else}
-							<img
-								src="https://placehold.co/600x400?text=No+images+found"
-								class="object-contain"
-								alt="Placeholder"
-							/>
-						{/if}
-					</div>
-				</div>
-				<button
-					class="carousel-control-prev"
-					type="button"
-					data-bs-target="#image-carousel"
-					data-bs-slide="prev"
-				>
-					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Previous</span>
-				</button>
-				<button
-					class="carousel-control-next"
-					type="button"
-					data-bs-target="#image-carousel"
-					data-bs-slide="next"
-				>
-					<span class="carousel-control-next-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Next</span>
-				</button>
-			</div>
+			<ImageCarousel images={[data.poi.img]} />
 		</div>
 	</div>
 </div>
