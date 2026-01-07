@@ -2,7 +2,7 @@
 	import { loggedInUser } from "$lib/runes.svelte";
 </script>
 
-<div class="bg-body-tertiary flex flex-1 justify-center">
+<div class="bg-body-tertiary flex justify-center">
 	<div class="w-7xl">
 		<nav class="navbar navbar-expand-sm bg-body-tertiary">
 			<div class="container-fluid">
