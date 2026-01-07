@@ -1,9 +1,9 @@
 <script lang="ts">
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
-	import POIDetailCard from "$lib/components/POIDetailCard.svelte";
 	import { selectedMarker } from "$lib/runes.svelte";
 	import { refreshMap } from "$lib/services/utils";
 	import { onMount } from "svelte";
+	import POIDetailCard from "./POIDetailCard.svelte";
 
 	let map: LeafletMap;
 
