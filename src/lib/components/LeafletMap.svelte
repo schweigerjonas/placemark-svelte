@@ -11,7 +11,7 @@
 		height = 80,
 		location = { lat: 51.1657, lng: 10.4515 }, // center of Germany
 		zoom = 8,
-		minZoom = 7,
+		minZoom = 5,
 		activeLayer = "Terrain",
 		markerLayers = [] as MarkerLayer[]
 	} = $props();
@@ -37,7 +37,9 @@
 		map.flyTo({ lat: lat, lng: lng });
 	}
 
-	export function populateLayer(layer: MarkerLayer) {
+	export async function populateLayer(layer: MarkerLayer) {
+		const leaflet = await import("leaflet");
+		L = leaflet.default;
 		let group = L.layerGroup([]);
 
 		layer.markerSpecs.forEach((markerSpec) => {

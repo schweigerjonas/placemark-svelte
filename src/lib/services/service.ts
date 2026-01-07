@@ -12,7 +12,7 @@ export const service = {
 		try {
 			const res = await apiClient.post("/users", user);
 
-			return res.request.status === 201;
+			return res.status === 201;
 		} catch (err) {
 			console.error(err);
 
@@ -52,7 +52,7 @@ export const service = {
 		try {
 			const res = await apiClient.get(`/users/${id}`);
 
-			if (res.request.status === 200) {
+			if (res.status === 200) {
 				return res.data;
 			}
 
@@ -68,7 +68,7 @@ export const service = {
 		try {
 			const res = await apiClient.put(`/users/${id}`, updateDetails);
 
-			if (res.request.status === 201) {
+			if (res.status === 201) {
 				refreshCurrentUser();
 
 				return true;
@@ -86,7 +86,7 @@ export const service = {
 		try {
 			const res = await apiClient.put(`/users/${id}/password`, updateDetails);
 
-			if (res.request.status === 201) {
+			if (res.status === 201) {
 				return true;
 			}
 
@@ -102,7 +102,7 @@ export const service = {
 		try {
 			const res = await apiClient.delete(`/users/${id}`);
 
-			return res.request.status === 204;
+			return res.status === 204;
 		} catch (err) {
 			console.error(err);
 
@@ -110,11 +110,11 @@ export const service = {
 		}
 	},
 
-	async getAllPOIs(): Promise<PointOfInterest[]> {
+	async getAllCategories(): Promise<Category[]> {
 		try {
-			const res = await apiClient.get("/pois");
+			const res = await apiClient.get("/categories");
 
-			if (res.request.status === 200) {
+			if (res.status === 200) {
 				return res.data;
 			}
 
@@ -126,11 +126,27 @@ export const service = {
 		}
 	},
 
-	async getAllCategories(): Promise<Category[]> {
+	async getCategoryById(id: string): Promise<Category | null> {
 		try {
-			const res = await apiClient.get("/categories");
+			const res = await apiClient.get(`/categories/${id}`);
 
-			if (res.request.status === 200) {
+			if (res.status === 200) {
+				return res.data;
+			}
+
+			return null;
+		} catch (err) {
+			console.error(err);
+
+			return null;
+		}
+	},
+
+	async getAllPOIs(): Promise<PointOfInterest[]> {
+		try {
+			const res = await apiClient.get("/pois");
+
+			if (res.status === 200) {
 				return res.data;
 			}
 
@@ -139,6 +155,21 @@ export const service = {
 			console.error(err);
 
 			return [];
+		}
+	},
+
+	async getPOIById(id: string): Promise<PointOfInterest | null> {
+		try {
+			const res = await apiClient.get(`/pois/${id}`);
+			if (res.status === 200) {
+				return res.data;
+			}
+
+			return null;
+		} catch (err) {
+			console.error(err);
+
+			return null;
 		}
 	}
 };
