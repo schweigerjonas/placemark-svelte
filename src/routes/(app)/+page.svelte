@@ -1,24 +1,36 @@
 <script lang="ts">
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
-	import { selectedMarker } from "$lib/runes.svelte";
+	import { currentCategories, currentPOIs, selectedMarker } from "$lib/runes.svelte";
 	import { refreshMap } from "$lib/services/utils";
 	import { onMount } from "svelte";
 	import POIDetailCard from "./POIDetailCard.svelte";
 	import Chart from "svelte-frappe-charts";
 
-	const chartData = {
-		labels: ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"],
+	let map: LeafletMap;
+	let categoryNames: string[] = ["category"];
+	let counts: number[] = [0];
+
+	const totalByCategory = {
+		labels: categoryNames,
 		datasets: [
 			{
-				values: [10, 12, 3, 9, 8, 15, 9]
+				values: counts
 			}
 		]
 	};
 
-	let map: LeafletMap;
-
 	onMount(async () => {
 		await refreshMap(map);
+
+		// get set of unique category titles
+		totalByCategory.labels = [
+			...new Set(currentCategories.categories.map((category) => category.title))
+		];
+		// get number of POIs per category
+		// for every category, get all POIs belonging to it and return the length
+		totalByCategory.datasets[0].values = currentCategories.categories.map(
+			(category) => currentPOIs.pois.filter((poi) => poi.categoryID === category._id).length
+		);
 	});
 </script>
 
@@ -33,10 +45,10 @@
 			{/if}
 		</div>
 	</div>
-	<div>
+	<div class="w-1/2 p-3">
 		<h3>Statistics</h3>
-		<div class="w-1/2">
-			<Chart data={chartData} type="pie" maxSlices={5} />
+		<div class="card p-2">
+			<Chart data={totalByCategory} type="pie" height={300} maxSlices={5} />
 		</div>
 	</div>
 </div>

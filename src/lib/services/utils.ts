@@ -22,6 +22,7 @@ export async function refreshPOIInfo() {
 	]);
 }
 
+// Setup Maps with Layers
 export async function refreshMap(map: LeafletMap) {
 	if (!loggedInUser.token) await restoreSession();
 	await refreshPOIInfo();
