@@ -36,7 +36,7 @@
 	<div>
 		<h3>Statistics</h3>
 		<div class="w-1/2">
-			<Chart data={chartData} type="line" />
+			<Chart data={chartData} type="pie" maxSlices={5} />
 		</div>
 	</div>
 </div>

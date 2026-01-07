@@ -1,5 +1,5 @@
 import type LeafletMap from "$lib/components/LeafletMap.svelte";
-import { currentUser, loggedInUser } from "$lib/runes.svelte";
+import { currentCategories, currentPOIs, currentUser, loggedInUser } from "$lib/runes.svelte";
 import type { Category, MarkerLayer, MarkerSpec, PointOfInterest } from "$lib/types/types";
 import { service } from "./service";
 import { restoreSession } from "./session-utils";
@@ -15,19 +15,25 @@ export async function refreshCurrentUser() {
 	}
 }
 
+export async function refreshPOIInfo() {
+	[currentPOIs.pois, currentCategories.categories] = await Promise.all([
+		service.getAllPOIs(),
+		service.getAllCategories()
+	]);
+}
+
 export async function refreshMap(map: LeafletMap) {
 	if (!loggedInUser.token) await restoreSession();
+	await refreshPOIInfo();
 
-	const [pois, categories] = await Promise.all([service.getAllPOIs(), service.getAllCategories()]);
-
-	const layers = prepareMarkerLayers(pois, categories);
+	const layers = prepareMarkerLayers(currentPOIs.pois, currentCategories.categories);
 
 	layers.forEach((layer) => {
 		map.populateLayer(layer);
 	});
 
-	if (pois.length > 0) {
-		const lastPOI = pois[pois.length - 1];
+	if (currentPOIs.pois.length > 0) {
+		const lastPOI = currentPOIs.pois[currentPOIs.pois.length - 1];
 		if (lastPOI) map.moveTo(+lastPOI.location.lat, +lastPOI.location.lng);
 	}
 }

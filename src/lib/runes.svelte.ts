@@ -1,4 +1,10 @@
-import { ToastType, type MarkerSpec, type PointOfInterest, type ToastData } from "./types/types";
+import {
+	ToastType,
+	type Category,
+	type MarkerSpec,
+	type PointOfInterest,
+	type ToastData
+} from "./types/types";
 
 export const loggedInUser = $state({
 	name: "",
@@ -13,6 +19,14 @@ export const currentUser = $state({
 	lastName: "",
 	email: "",
 	role: ""
+});
+
+export const currentCategories = $state({
+	categories: [] as Category[]
+});
+
+export const currentPOIs = $state({
+	pois: [] as PointOfInterest[]
 });
 
 export const toastData = $state({
