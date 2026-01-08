@@ -23,18 +23,17 @@ export async function refreshPOIInfo() {
 }
 
 // Setup Maps with Layers
-export async function refreshMap(map: LeafletMap) {
+export async function refreshMap(map: LeafletMap, categories: Category[], pois: PointOfInterest[]) {
 	if (!loggedInUser.token) await restoreSession();
-	await refreshPOIInfo();
 
-	const layers = prepareMarkerLayers(currentPOIs.pois, currentCategories.categories);
+	const layers = prepareMarkerLayers(pois, categories);
 
 	layers.forEach((layer) => {
 		map.populateLayer(layer);
 	});
 
-	if (currentPOIs.pois.length > 0) {
-		const lastPOI = currentPOIs.pois[currentPOIs.pois.length - 1];
+	if (pois.length > 0) {
+		const lastPOI = pois[pois.length - 1];
 		if (lastPOI) map.moveTo(+lastPOI.location.lat, +lastPOI.location.lng);
 	}
 }

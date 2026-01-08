@@ -126,6 +126,22 @@ export const service = {
 		}
 	},
 
+	async getUserCategories(id: string): Promise<Category[]> {
+		try {
+			const res = await apiClient.get(`/users/${id}/categories`);
+
+			if (res.status === 200) {
+				return res.data;
+			}
+
+			return [];
+		} catch (err) {
+			console.error(err);
+
+			return [];
+		}
+	},
+
 	async getCategoryById(id: string): Promise<Category | null> {
 		try {
 			const res = await apiClient.get(`/categories/${id}`);
@@ -145,6 +161,22 @@ export const service = {
 	async getAllPOIs(): Promise<PointOfInterest[]> {
 		try {
 			const res = await apiClient.get("/pois");
+
+			if (res.status === 200) {
+				return res.data;
+			}
+
+			return [];
+		} catch (err) {
+			console.error(err);
+
+			return [];
+		}
+	},
+
+	async getCategoryPOIs(id: string): Promise<PointOfInterest[]> {
+		try {
+			const res = await apiClient.get(`/categories/${id}/pois`);
 
 			if (res.status === 200) {
 				return res.data;
