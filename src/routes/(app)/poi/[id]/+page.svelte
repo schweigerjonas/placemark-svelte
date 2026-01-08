@@ -5,8 +5,9 @@
 	import ImageCarousel from "./ImageCarousel.svelte";
 	import POIInformation from "$lib/components/POIInformation.svelte";
 	import { currentCategories, currentPOIs } from "$lib/runes.svelte.js";
+	import type { PageProps } from "./$types";
 
-	let { data } = $props();
+	let { data }: PageProps = $props();
 
 	let map: LeafletMap;
 
