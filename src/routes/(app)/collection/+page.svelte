@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CategoryItem from "$lib/components/CategoryItem.svelte";
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
 	import { loggedInUser } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
@@ -26,10 +27,21 @@
 </script>
 
 <div class="flex flex-col gap-3">
-	<h2>My Collection</h2>
-	<div class="flex items-center">
-		<div class="min-w-1/2 grow pl-2">
+	<h3>My Collection</h3>
+	<div class="flex gap-2">
+		<div class="w-2/3 grow pl-2">
 			<LeafletMap height={60} zoom={7} bind:this={map} />
+		</div>
+		<div class="flex w-1/3 flex-col gap-2">
+			<div class="flex items-center justify-between">
+				<h5 class="font-bold">Categories</h5>
+				<button>
+					<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50">add_circle</span>
+				</button>
+			</div>
+			{#each categories as category (category._id)}
+				<CategoryItem {category} {pois} />
+			{/each}
 		</div>
 	</div>
 </div>
