@@ -32,9 +32,13 @@
 					<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50">add_circle</span>
 				</button>
 			</div>
-			{#each categoriesWithPOIs as category (category._id)}
-				<CategoryItem {category} pois={category.pois} />
-			{/each}
+			{#if categoriesWithPOIs.length !== 0}
+				{#each categoriesWithPOIs as category (category._id)}
+					<CategoryItem {category} pois={category.pois} />
+				{/each}
+			{:else}
+				<span>No categories added yet</span>
+			{/if}
 		</div>
 	</div>
 </div>
