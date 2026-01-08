@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
 	import { loggedInUser, toastData } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
@@ -33,7 +32,6 @@
 			currentPassword = "";
 			newPassword = "";
 			confirmPassword = "";
-			goto("/profile");
 		} else {
 			notification = "Current password incorrect or server error.";
 			currentPassword = "";

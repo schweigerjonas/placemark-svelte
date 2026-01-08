@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
 	import { currentUser, loggedInUser, toastData } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
@@ -23,7 +22,6 @@
 			toastData.message = "Profile information updated.";
 			toastData.type = ToastType.Success;
 			toastData.visible = true;
-			goto("/profile");
 		} else {
 			notification = "Something went wrong.";
 		}
