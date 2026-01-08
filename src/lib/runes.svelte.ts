@@ -1,6 +1,7 @@
 import {
 	ToastType,
 	type Category,
+	type CategoryWithPOIs,
 	type MarkerSpec,
 	type PointOfInterest,
 	type ToastData
@@ -27,6 +28,12 @@ export const currentCategories = $state({
 
 export const currentPOIs = $state({
 	pois: [] as PointOfInterest[]
+});
+
+export const currentUserData = $state({
+	categories: [] as Category[],
+	pois: [] as PointOfInterest[],
+	categoriesWithPOIs: [] as CategoryWithPOIs[]
 });
 
 export const toastData = $state({

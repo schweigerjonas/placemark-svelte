@@ -1,38 +1,21 @@
 <script lang="ts">
 	import CategoryItem from "$lib/components/CategoryItem.svelte";
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
-	import { loggedInUser } from "$lib/runes.svelte";
-	import { service } from "$lib/services/service";
+	import { currentUserData, loggedInUser } from "$lib/runes.svelte";
 	import { restoreSession } from "$lib/services/session-utils";
-	import { refreshMap } from "$lib/services/utils";
-	import type { Category, PointOfInterest } from "$lib/types/types";
+	import { refreshCurrentUserData, refreshMap } from "$lib/services/utils";
+	import type { CategoryWithPOIs } from "$lib/types/types";
 	import { onMount } from "svelte";
-
-	interface CategoryWithPOIs extends Category {
-		pois: PointOfInterest[];
-	}
 
 	let map: LeafletMap;
 	let categoriesWithPOIs: CategoryWithPOIs[] = [];
 
 	onMount(async () => {
 		if (!loggedInUser.token) await restoreSession();
+		await refreshCurrentUserData();
+		await refreshMap(map, currentUserData.categories, currentUserData.pois);
 
-		const categories = await service.getUserCategories(loggedInUser._id);
-
-		// get POIs of all user categories
-		const poiPromises = categories.map((category) => service.getCategoryPOIs(category._id));
-		const results = await Promise.all(poiPromises); // resolves all promises in parallel
-		const pois = results.flat();
-
-		categoriesWithPOIs = categories.map((category, i) => {
-			return {
-				...category,
-				pois: results[i]
-			};
-		});
-
-		await refreshMap(map, categories, pois);
+		categoriesWithPOIs = currentUserData.categoriesWithPOIs;
 	});
 </script>
 

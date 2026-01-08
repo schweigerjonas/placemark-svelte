@@ -48,6 +48,10 @@ export type Category = {
 	_id: string;
 };
 
+export interface CategoryWithPOIs extends Category {
+	pois: PointOfInterest[];
+}
+
 export enum ToastType {
 	Success = "success",
 	Danger = "danger",
