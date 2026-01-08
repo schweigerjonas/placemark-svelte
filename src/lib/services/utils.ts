@@ -21,7 +21,7 @@ export async function refreshCurrentUser() {
 	}
 }
 
-export async function refreshPOIInfo() {
+export async function refreshData() {
 	[currentPOIs.pois, currentCategories.categories] = await Promise.all([
 		service.getAllPOIs(),
 		service.getAllCategories()
@@ -49,6 +49,9 @@ export async function refreshCurrentUserData() {
 // Setup Maps with Layers
 export async function refreshMap(map: LeafletMap, categories: Category[], pois: PointOfInterest[]) {
 	if (!loggedInUser.token) await restoreSession();
+
+	// remove any existing overlays or controls
+	map.clearLayers();
 
 	const layers = prepareMarkerLayers(pois, categories);
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
 	import { currentCategories, currentPOIs, selectedMarker } from "$lib/runes.svelte";
-	import { refreshMap, refreshPOIInfo } from "$lib/services/utils";
+	import { refreshMap, refreshData } from "$lib/services/utils";
 	import { onMount } from "svelte";
 	import POIDetailCard from "./POIDetailCard.svelte";
 	import Chart from "svelte-frappe-charts";
@@ -20,7 +20,7 @@
 	};
 
 	onMount(async () => {
-		await refreshPOIInfo();
+		await refreshData();
 		await refreshMap(map, currentCategories.categories, currentPOIs.pois);
 
 		// get set of unique category titles

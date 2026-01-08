@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
-	import { refreshMap, refreshPOIInfo } from "$lib/services/utils.js";
+	import { refreshMap, refreshData } from "$lib/services/utils.js";
 	import { onMount } from "svelte";
 	import ImageCarousel from "./ImageCarousel.svelte";
 	import POIInformation from "$lib/components/POIInformation.svelte";
@@ -12,7 +12,7 @@
 	let map: LeafletMap;
 
 	onMount(async () => {
-		await refreshPOIInfo();
+		await refreshData();
 		await refreshMap(map, currentCategories.categories, currentPOIs.pois);
 		map.moveTo(+data.poi.location.lat, +data.poi.location.lng);
 	});

@@ -1,5 +1,7 @@
 <script lang="ts">
-	import type { Category, PointOfInterest } from "$lib/types/types";
+	import { toastData } from "$lib/runes.svelte";
+	import { service } from "$lib/services/service";
+	import { ToastType, type Category, type PointOfInterest } from "$lib/types/types";
 
 	let { category = {} as Category, pois = [] as PointOfInterest[] } = $props();
 
@@ -7,6 +9,34 @@
 
 	function toggle() {
 		isOpen = !isOpen;
+	}
+
+	async function deleteCategory(id: string, categoryTitle: string) {
+		const success = await service.deleteCategoryById(id);
+
+		if (success) {
+			toastData.message = `Category "${categoryTitle}" deleted.`;
+			toastData.type = ToastType.Success;
+			toastData.visible = true;
+		} else {
+			toastData.message = "Something went wrong.";
+			toastData.type = ToastType.Danger;
+			toastData.visible = true;
+		}
+	}
+
+	async function deletePOI(id: string, poiName: string) {
+		const success = await service.deletePOIById(id);
+
+		if (success) {
+			toastData.message = `Point of Interest "${poiName}" deleted.`;
+			toastData.type = ToastType.Success;
+			toastData.visible = true;
+		} else {
+			toastData.message = "Something went wrong.";
+			toastData.type = ToastType.Danger;
+			toastData.visible = true;
+		}
 	}
 </script>
 
@@ -22,7 +52,11 @@
 					>add_location_alt</span
 				>
 			</button>
-			<button class="pr-2" type="button">
+			<button
+				onclick={() => deleteCategory(category._id, category.title)}
+				class="pr-2"
+				type="button"
+			>
 				<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50">delete</span>
 			</button>
 		</div>
@@ -42,7 +76,7 @@
 								>add_photo_alternate</span
 							>
 						</button>
-						<button type="button">
+						<button onclick={() => deletePOI(poi._id, poi.name)} type="button">
 							<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50">delete</span>
 						</button>
 					</div>

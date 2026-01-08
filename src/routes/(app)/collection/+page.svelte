@@ -4,18 +4,19 @@
 	import { currentUserData, loggedInUser } from "$lib/runes.svelte";
 	import { restoreSession } from "$lib/services/session-utils";
 	import { refreshCurrentUserData, refreshMap } from "$lib/services/utils";
-	import type { CategoryWithPOIs } from "$lib/types/types";
 	import { onMount } from "svelte";
 
 	let map: LeafletMap;
-	let categoriesWithPOIs: CategoryWithPOIs[] = [];
+
+	$effect(() => {
+		if (map && currentUserData.pois.length > 0) {
+			refreshMap(map, currentUserData.categories, currentUserData.pois);
+		}
+	});
 
 	onMount(async () => {
 		if (!loggedInUser.token) await restoreSession();
 		await refreshCurrentUserData();
-		await refreshMap(map, currentUserData.categories, currentUserData.pois);
-
-		categoriesWithPOIs = currentUserData.categoriesWithPOIs;
 	});
 </script>
 
@@ -32,8 +33,8 @@
 					<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50">add_circle</span>
 				</button>
 			</div>
-			{#if categoriesWithPOIs.length !== 0}
-				{#each categoriesWithPOIs as category (category._id)}
+			{#if currentUserData.categoriesWithPOIs.length !== 0}
+				{#each currentUserData.categoriesWithPOIs as category (category._id)}
 					<CategoryItem {category} pois={category.pois} />
 				{/each}
 			{:else}

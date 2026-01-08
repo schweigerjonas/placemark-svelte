@@ -82,6 +82,17 @@
 		}
 	}
 
+	export function clearLayers() {
+		Object.keys(overlays).forEach((title) => {
+			const group = overlays[title];
+			map.removeLayer(group);
+			control.removeLayer(group);
+		});
+
+		overlays = {};
+		markerMap.clear();
+	}
+
 	onMount(async () => {
 		const leaflet = await import("leaflet");
 		L = leaflet.default;

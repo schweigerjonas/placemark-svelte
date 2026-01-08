@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { Category, PointOfInterest, Session, User, UserInfo } from "$lib/types/types";
 import { saveSession } from "./session-utils";
-import { refreshCurrentUser } from "./utils";
+import { refreshCurrentUser, refreshCurrentUserData, refreshData } from "./utils";
 
 export const apiClient = axios.create({
 	baseURL: "http://localhost:3000/api"
@@ -158,6 +158,20 @@ export const service = {
 		}
 	},
 
+	async deleteCategoryById(id: string): Promise<boolean> {
+		try {
+			const res = await apiClient.delete(`/categories/${id}`);
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return res.status === 204;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
 	async getAllPOIs(): Promise<PointOfInterest[]> {
 		try {
 			const res = await apiClient.get("/pois");
@@ -202,6 +216,20 @@ export const service = {
 			console.error(err);
 
 			return null;
+		}
+	},
+
+	async deletePOIById(id: string): Promise<boolean> {
+		try {
+			const res = await apiClient.delete(`/pois/${id}`);
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return res.status === 204;
+		} catch (err) {
+			console.error(err);
+
+			return false;
 		}
 	}
 };
