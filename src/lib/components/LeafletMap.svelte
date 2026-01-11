@@ -4,7 +4,8 @@
 	import { onMount } from "svelte";
 	import { ToastType, type MarkerLayer, type MarkerSpec } from "$lib/types/types";
 	import { SvelteMap } from "svelte/reactivity";
-	import { selectedMarker, toastData } from "$lib/runes.svelte";
+	import { selectedMarker } from "$lib/runes.svelte";
+	import { showToast } from "$lib/services/utils";
 
 	let {
 		id = "overview-map",
@@ -64,9 +65,7 @@
 					return;
 				}
 
-				toastData.message = "Something went wrong.";
-				toastData.type = ToastType.Danger;
-				toastData.visible = true;
+				showToast("Something went wrong.", ToastType.Danger, true);
 			});
 			marker.on("popupclose", () => {
 				selectedMarker.focused = false;

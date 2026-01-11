@@ -1,7 +1,8 @@
 <script lang="ts">
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
-	import { currentUser, loggedInUser, toastData } from "$lib/runes.svelte";
+	import { currentUser, loggedInUser } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
+	import { showToast } from "$lib/services/utils";
 	import { ToastType, type UserInfo } from "$lib/types/types";
 
 	let firstName = $state(currentUser.firstName);
@@ -19,9 +20,7 @@
 		const updated = await service.updateUser(loggedInUser._id, updateDetails as UserInfo);
 
 		if (updated) {
-			toastData.message = "Profile information updated.";
-			toastData.type = ToastType.Success;
-			toastData.visible = true;
+			showToast("Profile information updated.", ToastType.Success, true);
 		} else {
 			notification = "Something went wrong.";
 		}

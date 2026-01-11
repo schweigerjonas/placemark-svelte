@@ -4,11 +4,24 @@ import {
 	currentPOIs,
 	currentUser,
 	currentUserData,
-	loggedInUser
+	loggedInUser,
+	toastData
 } from "$lib/runes.svelte";
-import type { Category, MarkerLayer, MarkerSpec, PointOfInterest } from "$lib/types/types";
+import type {
+	Category,
+	MarkerLayer,
+	MarkerSpec,
+	PointOfInterest,
+	ToastType
+} from "$lib/types/types";
 import { service } from "./service";
 import { restoreSession } from "./session-utils";
+
+export function showToast(message: string, type: ToastType, visible: boolean) {
+	toastData.message = message;
+	toastData.type = type;
+	toastData.visible = visible;
+}
 
 export async function refreshCurrentUser() {
 	const user = await service.getUser(loggedInUser._id);

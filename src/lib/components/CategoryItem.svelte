@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { toastData } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
+	import { showToast } from "$lib/services/utils";
 	import { ToastType, type Category, type PointOfInterest } from "$lib/types/types";
 
 	let { category = {} as Category, pois = [] as PointOfInterest[] } = $props();
@@ -15,13 +15,9 @@
 		const success = await service.deleteCategoryById(id);
 
 		if (success) {
-			toastData.message = `Category "${categoryTitle}" deleted.`;
-			toastData.type = ToastType.Success;
-			toastData.visible = true;
+			showToast(`Category "${categoryTitle}" deleted.`, ToastType.Success, true);
 		} else {
-			toastData.message = "Something went wrong.";
-			toastData.type = ToastType.Danger;
-			toastData.visible = true;
+			showToast("Something went wrong.", ToastType.Danger, true);
 		}
 	}
 
@@ -29,13 +25,9 @@
 		const success = await service.deletePOIById(id);
 
 		if (success) {
-			toastData.message = `Point of Interest "${poiName}" deleted.`;
-			toastData.type = ToastType.Success;
-			toastData.visible = true;
+			showToast(`Point of Interest "${poiName}" deleted.`, ToastType.Success, true);
 		} else {
-			toastData.message = "Something went wrong.";
-			toastData.type = ToastType.Danger;
-			toastData.visible = true;
+			showToast("Something went wrong.", ToastType.Danger, true);
 		}
 	}
 </script>
