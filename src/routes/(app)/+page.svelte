@@ -55,6 +55,7 @@
 		<p>Visualizing our growing database of points of interest.</p>
 		<div class="w-1/2">
 			<div class="card p-2">
+				<small class="text-muted">Points of Interest per Category</small>
 				<Chart data={totalByCategory} type="pie" height={300} maxSlices={5} />
 			</div>
 		</div>
