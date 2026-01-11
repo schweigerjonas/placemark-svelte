@@ -59,8 +59,9 @@
 				<div
 					class="flex items-center justify-between border-b border-slate-100 px-3 py-2 last:border-0"
 				>
-					<div>
-						<span>{poi.name}</span>
+					<div class="flex items-center gap-2">
+						<a href="/poi/{poi._id}" class="footer-link">{poi.name}</a>
+						<span class="material-symbols-outlined no-underline">link</span>
 					</div>
 					<div class="flex gap-1">
 						<button type="button">
