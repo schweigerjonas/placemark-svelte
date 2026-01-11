@@ -46,3 +46,9 @@ export const selectedMarker = $state({
 	focused: false,
 	spec: {} as MarkerSpec
 });
+
+export const createPOIForm = $state({
+	categoryId: "",
+	categoryTitle: "",
+	visible: false
+});

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { createPOIForm } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
 	import { showToast } from "$lib/services/utils";
 	import { ToastType, type Category, type PointOfInterest } from "$lib/types/types";
@@ -30,6 +31,12 @@
 			showToast("Something went wrong.", ToastType.Danger, true);
 		}
 	}
+
+	function showCreatePOIForm() {
+		createPOIForm.categoryId = category._id;
+		createPOIForm.categoryTitle = category.title;
+		createPOIForm.visible = true;
+	}
 </script>
 
 <div class="overflow-hidden border border-slate-200 bg-white shadow-sm">
@@ -39,7 +46,7 @@
 			<span class="font-semibold text-slate-800">{category.title}</span>
 		</button>
 		<div class="flex gap-1">
-			<button type="button">
+			<button type="button" onclick={showCreatePOIForm}>
 				<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50"
 					>add_location_alt</span
 				>
