@@ -1,5 +1,12 @@
 import axios from "axios";
-import type { Category, PointOfInterest, Session, User, UserInfo } from "$lib/types/types";
+import type {
+	Category,
+	PointOfInterest,
+	PointOfInterestInfo,
+	Session,
+	User,
+	UserInfo
+} from "$lib/types/types";
 import { saveSession } from "./session-utils";
 import { refreshCurrentUser, refreshCurrentUserData, refreshData } from "./utils";
 
@@ -165,6 +172,20 @@ export const service = {
 			await refreshData();
 
 			return res.status === 204;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
+	async createPOI(id: string, poi: PointOfInterestInfo): Promise<boolean> {
+		try {
+			const res = await apiClient.post(`/categories/${id}/pois`, poi);
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return res.status === 201;
 		} catch (err) {
 			console.error(err);
 

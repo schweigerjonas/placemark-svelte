@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { createPOIForm } from "$lib/runes.svelte";
+	import { service } from "$lib/services/service";
+	import { showToast } from "$lib/services/utils";
+	import { ToastType, type PointOfInterestInfo } from "$lib/types/types";
 
 	let name = $state("");
 	let description = $state("");
@@ -12,11 +15,44 @@
 	});
 
 	async function create() {
-		createPOIForm.visible = false;
+		const poi: PointOfInterestInfo = {
+			name: name,
+			description: description,
+			location: {
+				lat: latitude,
+				lng: longitude
+			},
+			img: {
+				url: "",
+				publicID: ""
+			}
+		};
+		const success = await service.createPOI(createPOIForm.categoryId, poi);
+
+		if (success) {
+			showToast(`Point of Interest "${name}" created.`, ToastType.Success, true);
+			clearForm();
+			createPOIForm.visible = false;
+		} else {
+			showToast("Error: Could not create Point of Interest.", ToastType.Danger, true);
+		}
 	}
 
 	function close() {
+		clearForm();
 		createPOIForm.visible = false;
+	}
+
+	function clearForm() {
+		createPOIForm.categoryId = "";
+		createPOIForm.categoryTitle = "";
+		createPOIForm.lat = "";
+		createPOIForm.lng = "";
+
+		name = "";
+		description = "";
+		latitude = "";
+		longitude = "";
 	}
 </script>
 

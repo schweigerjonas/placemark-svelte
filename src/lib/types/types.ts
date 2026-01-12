@@ -41,6 +41,8 @@ export type PointOfInterest = {
 	_id: string;
 };
 
+export type PointOfInterestInfo = Omit<PointOfInterest, "_id" | "categoryID">;
+
 export type Category = {
 	title: string;
 	img: Image;
