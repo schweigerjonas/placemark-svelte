@@ -6,6 +6,11 @@
 	let latitude = $state("");
 	let longitude = $state("");
 
+	$effect(() => {
+		if (createPOIForm.lat) latitude = createPOIForm.lat;
+		if (createPOIForm.lng) longitude = createPOIForm.lng;
+	});
+
 	async function create() {
 		createPOIForm.visible = false;
 	}
@@ -63,6 +68,10 @@
 				/>
 			</div>
 		</div>
+		<small class="text-muted mb-3">
+			You can input the coordinates manually or by simply clicking on the desired location on the
+			map.
+		</small>
 		<div class="flex items-center justify-end gap-3">
 			<button type="button" onclick={close} class="btn btn-secondary">Close</button>
 			<button type="submit" class="btn btn-primary">Create</button>

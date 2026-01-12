@@ -4,7 +4,7 @@
 	import { onMount } from "svelte";
 	import { ToastType, type MarkerLayer, type MarkerSpec } from "$lib/types/types";
 	import { SvelteMap } from "svelte/reactivity";
-	import { selectedMarker } from "$lib/runes.svelte";
+	import { createPOIForm, selectedMarker } from "$lib/runes.svelte";
 	import { showToast } from "$lib/services/utils";
 
 	let {
@@ -125,6 +125,16 @@
 				populateLayer(layer);
 			});
 		}
+
+		map.on("click", (e: L.LeafletMouseEvent) => {
+			if (createPOIForm.visible) {
+				let popup = L.popup();
+
+				createPOIForm.lat = e.latlng.lat.toString();
+				createPOIForm.lng = e.latlng.lng.toString();
+				popup.setLatLng(e.latlng).setContent(`Location selected`).openOn(map);
+			}
+		});
 	});
 </script>
 

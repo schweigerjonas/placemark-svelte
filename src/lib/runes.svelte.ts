@@ -50,5 +50,7 @@ export const selectedMarker = $state({
 export const createPOIForm = $state({
 	categoryId: "",
 	categoryTitle: "",
+	lat: "",
+	lng: "",
 	visible: false
 });
