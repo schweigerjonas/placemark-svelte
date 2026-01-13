@@ -255,6 +255,23 @@ export const service = {
 		}
 	},
 
+	async updatePOI(id: string, updateDetails: PointOfInterestInfo): Promise<boolean> {
+		try {
+			const res = await apiClient.put(`/pois/${id}`, updateDetails);
+
+			if (res.status === 201) {
+				await refreshCurrentUserData();
+				await refreshData();
+				return true;
+			}
+			return false;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
 	async deletePOIById(id: string): Promise<boolean> {
 		try {
 			const res = await apiClient.delete(`/pois/${id}`);
@@ -265,6 +282,44 @@ export const service = {
 		} catch (err) {
 			console.error(err);
 
+			return false;
+		}
+	},
+
+	async addImageToPOI(poi: PointOfInterest, file: File): Promise<boolean> {
+		try {
+			const formData = new FormData();
+			formData.append("imageFile", file);
+
+			const res = await apiClient.post(`/images`, formData);
+
+			if (res.status !== 201) {
+				console.error("image upload failed");
+				return false;
+			}
+
+			const payload: PointOfInterestInfo = {
+				name: poi.name,
+				description: poi.description,
+				location: {
+					lat: poi.location.lat,
+					lng: poi.location.lng
+				},
+				img: res.data
+			};
+
+			const updateSuccess = await this.updatePOI(poi._id, payload);
+
+			if (!updateSuccess) {
+				console.error("poi update failed");
+				return false;
+			}
+
+			await refreshCurrentUserData();
+			await refreshData();
+			return true;
+		} catch (err) {
+			console.error(err);
 			return false;
 		}
 	}
