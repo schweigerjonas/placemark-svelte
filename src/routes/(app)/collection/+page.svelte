@@ -10,6 +10,8 @@
 
 	let map: LeafletMap;
 
+	let height = 60;
+
 	$effect(() => {
 		if (map && currentUserData.pois.length > 0) {
 			refreshMap(map, currentUserData.categories, currentUserData.pois);
@@ -24,22 +26,26 @@
 
 <div class="flex flex-col gap-3 px-2">
 	<h3>My Collection</h3>
-	<div class="flex gap-4">
+	<div class="flex gap-4" style="height: {height}vh;">
 		<div class="w-2/3 grow">
-			<LeafletMap height={60} zoom={7} bind:this={map} />
+			<LeafletMap {height} zoom={7} bind:this={map} />
 		</div>
 		<div class="flex w-1/3 flex-col gap-2">
 			<CreateCategoryForm />
-			{#if currentUserData.categoriesWithPOIs.length !== 0}
-				{#each currentUserData.categoriesWithPOIs as category (category._id)}
-					<CategoryItem {category} pois={category.pois} />
-				{/each}
-			{:else}
-				<span>No categories added yet</span>
-			{/if}
+			<div class="flex flex-col gap-2 overflow-y-auto">
+				{#if currentUserData.categoriesWithPOIs.length !== 0}
+					{#each currentUserData.categoriesWithPOIs as category (category._id)}
+						<div class="flex-none">
+							<CategoryItem {category} pois={category.pois} />
+						</div>
+					{/each}
+				{:else}
+					<span>No categories added yet</span>
+				{/if}
+			</div>
 		</div>
 	</div>
-	<div class="">
+	<div>
 		{#if createPOIForm.visible}
 			<CreatePOIForm />
 		{/if}
