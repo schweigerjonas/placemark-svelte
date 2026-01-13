@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createPOIForm } from "$lib/runes.svelte";
+	import { addImageForm, createPOIForm } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
 	import { showToast } from "$lib/services/utils";
 	import { ToastType, type Category, type PointOfInterest } from "$lib/types/types";
@@ -37,6 +37,11 @@
 		createPOIForm.categoryTitle = category.title;
 		createPOIForm.visible = true;
 	}
+
+	function showAddImageForm(poi: PointOfInterest) {
+		addImageForm.poi = poi;
+		addImageForm.visible = true;
+	}
 </script>
 
 <div class="overflow-hidden border border-slate-200 bg-white shadow-sm">
@@ -71,7 +76,7 @@
 						<span class="material-symbols-outlined no-underline">link</span>
 					</div>
 					<div class="flex gap-1">
-						<button type="button">
+						<button onclick={() => showAddImageForm(poi)} type="button">
 							<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50"
 								>add_photo_alternate</span
 							>

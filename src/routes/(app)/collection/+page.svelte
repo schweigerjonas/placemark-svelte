@@ -1,12 +1,13 @@
 <script lang="ts">
 	import CategoryItem from "$lib/components/CategoryItem.svelte";
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
-	import { createPOIForm, currentUserData, loggedInUser } from "$lib/runes.svelte";
+	import { addImageForm, createPOIForm, currentUserData, loggedInUser } from "$lib/runes.svelte";
 	import { restoreSession } from "$lib/services/session-utils";
 	import { refreshCurrentUserData, refreshMap } from "$lib/services/utils";
 	import { onMount } from "svelte";
-	import CreatePOIForm from "./CreatePOIForm.svelte";
-	import CreateCategoryForm from "./CreateCategoryForm.svelte";
+	import POIForm from "./POIForm.svelte";
+	import CategoryForm from "./CategoryForm.svelte";
+	import ImageForm from "./ImageForm.svelte";
 
 	let map: LeafletMap;
 
@@ -31,7 +32,7 @@
 			<LeafletMap {height} zoom={7} bind:this={map} />
 		</div>
 		<div class="flex w-1/3 flex-col gap-2">
-			<CreateCategoryForm />
+			<CategoryForm />
 			<div class="flex flex-col gap-2 overflow-y-auto">
 				{#if currentUserData.categoriesWithPOIs.length !== 0}
 					{#each currentUserData.categoriesWithPOIs as category (category._id)}
@@ -45,9 +46,14 @@
 			</div>
 		</div>
 	</div>
-	<div>
+	<div class="flex gap-3">
 		{#if createPOIForm.visible}
-			<CreatePOIForm />
+			<div class="grow">
+				<POIForm />
+			</div>
+		{/if}
+		{#if addImageForm.visible}
+			<ImageForm />
 		{/if}
 	</div>
 </div>

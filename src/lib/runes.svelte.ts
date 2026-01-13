@@ -54,3 +54,8 @@ export const createPOIForm = $state({
 	lng: "",
 	visible: false
 });
+
+export const addImageForm = $state({
+	poi: {} as PointOfInterest,
+	visible: false
+});

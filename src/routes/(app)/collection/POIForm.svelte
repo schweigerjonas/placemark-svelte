@@ -56,8 +56,16 @@
 	}
 </script>
 
-<div class="card w-2/3 p-3">
-	<h5>Create Point of Interest for Category "{createPOIForm.categoryTitle}"</h5>
+<div class="card p-3">
+	<div class="flex justify-between">
+		<h5>Create Point of Interest for Category "{createPOIForm.categoryTitle}"</h5>
+		<button
+			onclick={close}
+			type="button"
+			class="btn-close"
+			aria-label="Close create point of interest form"
+		></button>
+	</div>
 	<form onsubmit={create} class="flex flex-col gap-3">
 		<div class="w-2/3 grow">
 			<label class="form-label font-bold" for="poi-name">Name</label>
