@@ -21,7 +21,12 @@
 		{#each images as image, i (image.publicID)}
 			<div class="carousel-item {i === 0 ? 'active' : ''}">
 				{#if image.url}
-					<img src={image.url} class="object-contain" alt="" />
+					<img
+						src={image.url}
+						class="object-contain"
+						style="max-height: 400px; max-width: 600px;"
+						alt=""
+					/>
 				{:else}
 					<img
 						src="https://placehold.co/600x400?text=No+images+found"
