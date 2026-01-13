@@ -50,6 +50,8 @@ export type Category = {
 	_id: string;
 };
 
+export type CategoryInfo = Omit<Category, "_id" | "userID">;
+
 export interface CategoryWithPOIs extends Category {
 	pois: PointOfInterest[];
 }

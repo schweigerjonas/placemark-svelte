@@ -6,6 +6,7 @@
 	import { refreshCurrentUserData, refreshMap } from "$lib/services/utils";
 	import { onMount } from "svelte";
 	import CreatePOIForm from "./CreatePOIForm.svelte";
+	import CreateCategoryForm from "./CreateCategoryForm.svelte";
 
 	let map: LeafletMap;
 
@@ -28,12 +29,7 @@
 			<LeafletMap height={60} zoom={7} bind:this={map} />
 		</div>
 		<div class="flex w-1/3 flex-col gap-2">
-			<div class="flex items-center justify-between">
-				<h5 class="font-bold">Categories</h5>
-				<button>
-					<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50">add_circle</span>
-				</button>
-			</div>
+			<CreateCategoryForm />
 			{#if currentUserData.categoriesWithPOIs.length !== 0}
 				{#each currentUserData.categoriesWithPOIs as category (category._id)}
 					<CategoryItem {category} pois={category.pois} />

@@ -30,7 +30,7 @@
 		const success = await service.createPOI(createPOIForm.categoryId, poi);
 
 		if (success) {
-			showToast(`Point of Interest "${name}" created.`, ToastType.Success, true);
+			showToast(`Point of Interest "${poi.name}" created.`, ToastType.Success, true);
 			clearForm();
 			createPOIForm.visible = false;
 		} else {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import type {
 	Category,
+	CategoryInfo,
 	PointOfInterest,
 	PointOfInterestInfo,
 	Session,
@@ -110,6 +111,20 @@ export const service = {
 			const res = await apiClient.delete(`/users/${id}`);
 
 			return res.status === 204;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
+	async createCategory(id: string, category: CategoryInfo): Promise<boolean> {
+		try {
+			const res = await apiClient.post(`/users/${id}/categories`, category);
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return res.status === 201;
 		} catch (err) {
 			console.error(err);
 
