@@ -11,7 +11,7 @@
 
 	$effect(() => {
 		if (addImageForm.poi.img.publicID) {
-			images.push(addImageForm.poi.img);
+			images = [addImageForm.poi.img];
 		}
 	});
 
