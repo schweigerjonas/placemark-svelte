@@ -3,6 +3,7 @@
 	import { service } from "$lib/services/service";
 	import { showToast } from "$lib/services/utils";
 	import { ToastType, type Image, type PointOfInterest } from "$lib/types/types";
+	import { onDestroy } from "svelte";
 	import ImageCarousel from "../poi/[id]/ImageCarousel.svelte";
 
 	let fileInput: HTMLInputElement;
@@ -50,6 +51,11 @@
 			addImageForm.poi = newPOI;
 		}
 	}
+
+	onDestroy(() => {
+		addImageForm.poi = {} as PointOfInterest;
+		addImageForm.visible = false;
+	});
 </script>
 
 <div class="card flex flex-col gap-3 p-3">
