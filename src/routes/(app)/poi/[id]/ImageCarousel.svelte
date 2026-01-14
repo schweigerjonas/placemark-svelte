@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { Image } from "$lib/types/types";
 
-	let { images = [] as Image[], canDelete = false, onDelete = () => {} } = $props();
+	let { images = [] as Image[], canDelete = false, onDelete = () => {}, maxWidth = 600 } = $props();
+
+	const validImages = $derived(images.filter((image) => image.url && image.url !== ""));
 </script>
 
-<div id="image-carousel" class="carousel slide">
+<div id="image-carousel" class="carousel slide" style="max-width: {maxWidth}px">
 	<div class="carousel-indicators">
-		{#each images as image, i (image.publicID)}
+		{#each validImages as image, i (image.publicID)}
 			<button
 				type="button"
 				data-bs-target="#image-carousel"
@@ -17,14 +19,14 @@
 			></button>
 		{/each}
 	</div>
-	<div class="carousel-inner">
-		{#each images as image, i (image.publicID)}
-			<div class="carousel-item relative {i === 0 ? 'active' : ''}">
-				{#if image.url}
+	{#if validImages.length > 0}
+		<div class="carousel-inner">
+			{#each validImages as image, i (image.publicID)}
+				<div class="carousel-item relative {i === 0 ? 'active' : ''}">
 					<img
 						src={image.url}
 						class="object-contain"
-						style="max-height: 400px; max-width: 600px;"
+						style="height: 400px; max-width: {maxWidth}px;"
 						alt=""
 					/>
 					{#if canDelete}
@@ -41,32 +43,38 @@
 							</span>
 						</button>
 					{/if}
-				{:else}
-					<img
-						src="https://placehold.co/600x400?text=No+images+found"
-						class="object-contain"
-						alt="Placeholder"
-					/>
-				{/if}
+				</div>
+			{/each}
+		</div>
+		{#if validImages.length > 1}
+			<button
+				class="carousel-control-prev"
+				type="button"
+				data-bs-target="#image-carousel"
+				data-bs-slide="prev"
+			>
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<button
+				class="carousel-control-next"
+				type="button"
+				data-bs-target="#image-carousel"
+				data-bs-slide="next"
+			>
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			</button>
+		{/if}
+	{:else}
+		<div class="carousel-inner">
+			<div class="carousel-item active relative">
+				<img
+					src="https://placehold.co/600x400?text=No+images+found"
+					class="object-contain"
+					alt="Placeholder"
+				/>
 			</div>
-		{/each}
-	</div>
-	<button
-		class="carousel-control-prev"
-		type="button"
-		data-bs-target="#image-carousel"
-		data-bs-slide="prev"
-	>
-		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-		<span class="visually-hidden">Previous</span>
-	</button>
-	<button
-		class="carousel-control-next"
-		type="button"
-		data-bs-target="#image-carousel"
-		data-bs-slide="next"
-	>
-		<span class="carousel-control-next-icon" aria-hidden="true"></span>
-		<span class="visually-hidden">Next</span>
-	</button>
+		</div>
+	{/if}
 </div>

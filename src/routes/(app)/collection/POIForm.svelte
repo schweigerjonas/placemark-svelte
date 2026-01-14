@@ -3,6 +3,7 @@
 	import { service } from "$lib/services/service";
 	import { showToast } from "$lib/services/utils";
 	import { ToastType, type PointOfInterestInfo } from "$lib/types/types";
+	import { onDestroy } from "svelte";
 
 	let name = $state("");
 	let description = $state("");
@@ -22,10 +23,12 @@
 				lat: latitude,
 				lng: longitude
 			},
-			img: {
-				url: "",
-				publicID: ""
-			}
+			img: [
+				{
+					url: "",
+					publicID: ""
+				}
+			]
 		};
 		const success = await service.createPOI(createPOIForm.categoryId, poi);
 
@@ -54,6 +57,11 @@
 		latitude = "";
 		longitude = "";
 	}
+
+	onDestroy(() => {
+		clearForm();
+		createPOIForm.visible = false;
+	});
 </script>
 
 <div class="card p-3">

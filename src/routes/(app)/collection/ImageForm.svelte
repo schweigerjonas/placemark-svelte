@@ -3,11 +3,12 @@
 	import { service } from "$lib/services/service";
 	import { showToast } from "$lib/services/utils";
 	import { ToastType, type Image, type PointOfInterest } from "$lib/types/types";
+	import { onDestroy } from "svelte";
 	import ImageCarousel from "../poi/[id]/ImageCarousel.svelte";
 
 	let fileInput: HTMLInputElement;
 
-	let images: Image[] = $derived([addImageForm.poi.img]);
+	let images: Image[] = $derived(addImageForm.poi.img);
 
 	async function upload(e: Event) {
 		e.preventDefault();
@@ -50,13 +51,18 @@
 			addImageForm.poi = newPOI;
 		}
 	}
+
+	onDestroy(() => {
+		addImageForm.poi = {} as PointOfInterest;
+		addImageForm.visible = false;
+	});
 </script>
 
 <div class="card flex flex-col gap-3 p-3">
 	<div>
 		<div class="mb-3 flex justify-between gap-3">
 			<h5 class="font-bold">Add Image to "{addImageForm.poi.name}"</h5>
-			<button onclick={close} type="button" class="btn-close" aria-label="Clase add image form"
+			<button onclick={close} type="button" class="btn-close" aria-label="Close add image form"
 			></button>
 		</div>
 		<form onsubmit={upload} class="flex flex-col gap-3">
