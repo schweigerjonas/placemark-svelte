@@ -7,7 +7,7 @@
 
 	let fileInput: HTMLInputElement;
 
-	let images: Image[] = $derived([addImageForm.poi.img]);
+	let images: Image[] = $derived(addImageForm.poi.img);
 
 	async function upload(e: Event) {
 		e.preventDefault();

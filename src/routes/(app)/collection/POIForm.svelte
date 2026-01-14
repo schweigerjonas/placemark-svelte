@@ -22,10 +22,12 @@
 				lat: latitude,
 				lng: longitude
 			},
-			img: {
-				url: "",
-				publicID: ""
-			}
+			img: [
+				{
+					url: "",
+					publicID: ""
+				}
+			]
 		};
 		const success = await service.createPOI(createPOIForm.categoryId, poi);
 

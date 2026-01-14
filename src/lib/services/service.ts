@@ -314,6 +314,9 @@ export const service = {
 				return false;
 			}
 
+			const images = poi.img;
+			images.push(res.data);
+
 			const payload: PointOfInterestInfo = {
 				name: poi.name,
 				description: poi.description,
@@ -321,7 +324,7 @@ export const service = {
 					lat: poi.location.lat,
 					lng: poi.location.lng
 				},
-				img: res.data
+				img: images
 			};
 
 			const updateSuccess = await this.updatePOI(poi._id, payload);
@@ -357,10 +360,12 @@ export const service = {
 					lat: poi.location.lat,
 					lng: poi.location.lng
 				},
-				img: {
-					url: "",
-					publicID: ""
-				}
+				img: [
+					{
+						url: "",
+						publicID: ""
+					}
+				]
 			};
 
 			const updateSuccess = await this.updatePOI(poi._id, payload);

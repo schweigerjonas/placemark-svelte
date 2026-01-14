@@ -36,7 +36,7 @@ export type PointOfInterest = {
 	name: string;
 	description: string;
 	location: Location;
-	img: Image;
+	img: Image[];
 	categoryID: string;
 	_id: string;
 };
