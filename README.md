@@ -1,38 +1,44 @@
-# sv
+## placemark-svelte
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+[![GitHub Release](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/schweigerjonas/placemark-svelte/releases/tag/v1.0.0)
 
-## Creating a project
+**placemark-svelte** is a modern, reactive web interface built with [SvelteKit](https://svelte.dev/). It serves as the primary frontend for the [placemark-core](https://github.com/schweigerjonas/placemark-core) backend application at [release 3.0.0](https://github.com/schweigerjonas/placemark-core/releases/tag/v3.0.0) and later, consuming its REST API to provide a seamless user experience for managing points of interest.
 
-If you're seeing this, you've probably already done this step. Congrats!
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Development](#development)
 
-```sh
-# create a new project in the current directory
-npx sv create
+## Getting Started
 
-# create a new project in my-app
-npx sv create my-app
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+- [NodeJS](https://nodejs.org/en) (LTS Version recommended)
+- A running instance of **placemark-core** (v3.0.0+)
+
+### Installation
+
+Clone the repository:
+
+```bash
+git clone git@github.com:schweigerjonas/placemark-svelte.git
+cd placemark-svelte
 ```
 
-## Developing
+Install dependencies:
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```bash
+npm install
+```
 
-```sh
-npm run dev
+## Development
 
-# or start the server and open the app in a new browser tab
+To run in development mode (with hot module replacement):
+
+```bash
 npm run dev -- --open
 ```
 
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+The server will typically start on <http://localhost:5173>.
