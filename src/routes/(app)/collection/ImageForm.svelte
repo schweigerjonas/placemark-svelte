@@ -7,13 +7,7 @@
 
 	let fileInput: HTMLInputElement;
 
-	let images: Image[] = $state([]);
-
-	$effect(() => {
-		if (addImageForm.poi.img.publicID) {
-			images = [addImageForm.poi.img];
-		}
-	});
+	let images: Image[] = $derived([addImageForm.poi.img]);
 
 	async function upload(e: Event) {
 		e.preventDefault();
@@ -25,6 +19,7 @@
 
 			if (success) {
 				showToast("Image uploaded.", ToastType.Success, true);
+				await updateImageFormPOI(addImageForm.poi);
 				fileInput.value = "";
 			}
 		} else {
@@ -32,9 +27,28 @@
 		}
 	}
 
+	async function deleteImage(imageId: string) {
+		const success = await service.deleteImageFromPOI(addImageForm.poi, imageId);
+
+		if (success) {
+			showToast("Image deleted.", ToastType.Success, true);
+			await updateImageFormPOI(addImageForm.poi);
+		} else {
+			showToast("Failed to delete image.", ToastType.Danger, true);
+		}
+	}
+
 	async function close() {
 		addImageForm.poi = {} as PointOfInterest;
 		addImageForm.visible = false;
+	}
+
+	async function updateImageFormPOI(poi: PointOfInterest) {
+		const newPOI = await service.getPOIById(poi._id);
+
+		if (newPOI) {
+			addImageForm.poi = newPOI;
+		}
 	}
 </script>
 
@@ -64,6 +78,6 @@
 		</form>
 	</div>
 	<div>
-		<ImageCarousel {images} canDelete={true} />
+		<ImageCarousel {images} canDelete={true} onDelete={(imageId: string) => deleteImage(imageId)} />
 	</div>
 </div>

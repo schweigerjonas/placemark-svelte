@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Image } from "$lib/types/types";
 
-	let { images = [] as Image[], canDelete = false, onDelete = (id: string) => {} } = $props();
+	let { images = [] as Image[], canDelete = false, onDelete = () => {} } = $props();
 </script>
 
 <div id="image-carousel" class="carousel slide">
@@ -28,10 +28,11 @@
 						alt=""
 					/>
 					{#if canDelete}
+						<!-- z-index ensures button is above control chevron buttons of carousel -->
 						<button
 							onclick={() => onDelete(image.publicID)}
 							type="button"
-							class="absolute end-2 top-2"
+							class="absolute end-2 top-2 z-10"
 						>
 							<span
 								class="material-symbols-outlined rounded-lg bg-slate-50 p-2 text-red-500 hover:bg-red-50"

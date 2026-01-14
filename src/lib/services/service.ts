@@ -317,9 +317,50 @@ export const service = {
 
 			await refreshCurrentUserData();
 			await refreshData();
+
 			return true;
 		} catch (err) {
 			console.error(err);
+
+			return false;
+		}
+	},
+	async deleteImageFromPOI(poi: PointOfInterest, imageId: string): Promise<boolean> {
+		try {
+			const res = await apiClient.delete(`/images/${imageId}`);
+
+			if (res.status !== 204) {
+				console.error("image deletion failed");
+				return false;
+			}
+
+			const payload: PointOfInterestInfo = {
+				name: poi.name,
+				description: poi.description,
+				location: {
+					lat: poi.location.lat,
+					lng: poi.location.lng
+				},
+				img: {
+					url: "",
+					publicID: ""
+				}
+			};
+
+			const updateSuccess = await this.updatePOI(poi._id, payload);
+
+			if (!updateSuccess) {
+				console.error("poi update failed");
+				return false;
+			}
+
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return true;
+		} catch (err) {
+			console.error(err);
+
 			return false;
 		}
 	}
