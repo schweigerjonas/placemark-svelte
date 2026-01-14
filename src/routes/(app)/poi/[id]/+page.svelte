@@ -38,7 +38,7 @@
 			</div>
 		</div>
 		<div class="card w-1/3">
-			<ImageCarousel images={[data.poi.img]} />
+			<ImageCarousel images={data.poi.img} />
 		</div>
 	</div>
 </div>

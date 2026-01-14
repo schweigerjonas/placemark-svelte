@@ -56,7 +56,7 @@
 	<div>
 		<div class="mb-3 flex justify-between gap-3">
 			<h5 class="font-bold">Add Image to "{addImageForm.poi.name}"</h5>
-			<button onclick={close} type="button" class="btn-close" aria-label="Clase add image form"
+			<button onclick={close} type="button" class="btn-close" aria-label="Close add image form"
 			></button>
 		</div>
 		<form onsubmit={upload} class="flex flex-col gap-3">
