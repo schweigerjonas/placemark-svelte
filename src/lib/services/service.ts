@@ -1,7 +1,15 @@
 import axios from "axios";
-import type { Category, PointOfInterest, Session, User, UserInfo } from "$lib/types/types";
+import type {
+	Category,
+	CategoryInfo,
+	PointOfInterest,
+	PointOfInterestInfo,
+	Session,
+	User,
+	UserInfo
+} from "$lib/types/types";
 import { saveSession } from "./session-utils";
-import { refreshCurrentUser } from "./utils";
+import { refreshCurrentUser, refreshCurrentUserData, refreshData } from "./utils";
 
 export const apiClient = axios.create({
 	baseURL: "http://localhost:3000/api"
@@ -110,9 +118,39 @@ export const service = {
 		}
 	},
 
+	async createCategory(id: string, category: CategoryInfo): Promise<boolean> {
+		try {
+			const res = await apiClient.post(`/users/${id}/categories`, category);
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return res.status === 201;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
 	async getAllCategories(): Promise<Category[]> {
 		try {
 			const res = await apiClient.get("/categories");
+
+			if (res.status === 200) {
+				return res.data;
+			}
+
+			return [];
+		} catch (err) {
+			console.error(err);
+
+			return [];
+		}
+	},
+
+	async getUserCategories(id: string): Promise<Category[]> {
+		try {
+			const res = await apiClient.get(`/users/${id}/categories`);
 
 			if (res.status === 200) {
 				return res.data;
@@ -142,9 +180,53 @@ export const service = {
 		}
 	},
 
+	async deleteCategoryById(id: string): Promise<boolean> {
+		try {
+			const res = await apiClient.delete(`/categories/${id}`);
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return res.status === 204;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
+	async createPOI(id: string, poi: PointOfInterestInfo): Promise<boolean> {
+		try {
+			const res = await apiClient.post(`/categories/${id}/pois`, poi);
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return res.status === 201;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
 	async getAllPOIs(): Promise<PointOfInterest[]> {
 		try {
 			const res = await apiClient.get("/pois");
+
+			if (res.status === 200) {
+				return res.data;
+			}
+
+			return [];
+		} catch (err) {
+			console.error(err);
+
+			return [];
+		}
+	},
+
+	async getCategoryPOIs(id: string): Promise<PointOfInterest[]> {
+		try {
+			const res = await apiClient.get(`/categories/${id}/pois`);
 
 			if (res.status === 200) {
 				return res.data;
@@ -170,6 +252,116 @@ export const service = {
 			console.error(err);
 
 			return null;
+		}
+	},
+
+	async updatePOI(id: string, updateDetails: PointOfInterestInfo): Promise<boolean> {
+		try {
+			const res = await apiClient.put(`/pois/${id}`, updateDetails);
+
+			if (res.status === 201) {
+				await refreshCurrentUserData();
+				await refreshData();
+				return true;
+			}
+			return false;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
+	async deletePOIById(id: string): Promise<boolean> {
+		try {
+			const res = await apiClient.delete(`/pois/${id}`);
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return res.status === 204;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
+	async addImageToPOI(poi: PointOfInterest, file: File): Promise<boolean> {
+		try {
+			const formData = new FormData();
+			formData.append("imageFile", file);
+
+			const res = await apiClient.post(`/images`, formData);
+
+			if (res.status !== 201) {
+				console.error("image upload failed");
+				return false;
+			}
+
+			const payload: PointOfInterestInfo = {
+				name: poi.name,
+				description: poi.description,
+				location: {
+					lat: poi.location.lat,
+					lng: poi.location.lng
+				},
+				img: res.data
+			};
+
+			const updateSuccess = await this.updatePOI(poi._id, payload);
+
+			if (!updateSuccess) {
+				console.error("poi update failed");
+				return false;
+			}
+
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return true;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+	async deleteImageFromPOI(poi: PointOfInterest, imageId: string): Promise<boolean> {
+		try {
+			const res = await apiClient.delete(`/images/${imageId}`);
+
+			if (res.status !== 204) {
+				console.error("image deletion failed");
+				return false;
+			}
+
+			const payload: PointOfInterestInfo = {
+				name: poi.name,
+				description: poi.description,
+				location: {
+					lat: poi.location.lat,
+					lng: poi.location.lng
+				},
+				img: {
+					url: "",
+					publicID: ""
+				}
+			};
+
+			const updateSuccess = await this.updatePOI(poi._id, payload);
+
+			if (!updateSuccess) {
+				console.error("poi update failed");
+				return false;
+			}
+
+			await refreshCurrentUserData();
+			await refreshData();
+
+			return true;
+		} catch (err) {
+			console.error(err);
+
+			return false;
 		}
 	}
 };

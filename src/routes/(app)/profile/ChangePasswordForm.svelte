@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
-	import { loggedInUser, toastData } from "$lib/runes.svelte";
+	import { loggedInUser } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
+	import { showToast } from "$lib/services/utils";
 	import { ToastType, type UserInfo } from "$lib/types/types";
 
 	let currentPassword = $state("");
@@ -26,14 +26,11 @@
 		} as UserInfo);
 
 		if (updated) {
-			toastData.message = "Password updated.";
-			toastData.type = ToastType.Success;
-			toastData.visible = true;
+			showToast("Password updated.", ToastType.Success, true);
 
 			currentPassword = "";
 			newPassword = "";
 			confirmPassword = "";
-			goto("/profile");
 		} else {
 			notification = "Current password incorrect or server error.";
 			currentPassword = "";

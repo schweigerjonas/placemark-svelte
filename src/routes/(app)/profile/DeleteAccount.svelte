@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
-	import { loggedInUser, toastData } from "$lib/runes.svelte";
+	import { loggedInUser } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
+	import { showToast } from "$lib/services/utils";
 	import { ToastType } from "$lib/types/types";
 
 	let notification = $state("");
@@ -11,9 +12,7 @@
 		let deleted = await service.deleteUser(loggedInUser._id);
 
 		if (deleted) {
-			toastData.message = "Account deleted.";
-			toastData.type = ToastType.Success;
-			toastData.visible = true;
+			showToast("Account deleted.", ToastType.Success, true);
 			goto("/logout");
 		} else {
 			notification = "Something went wrong.";

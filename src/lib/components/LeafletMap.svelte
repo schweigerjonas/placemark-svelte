@@ -4,7 +4,8 @@
 	import { onMount } from "svelte";
 	import { ToastType, type MarkerLayer, type MarkerSpec } from "$lib/types/types";
 	import { SvelteMap } from "svelte/reactivity";
-	import { selectedMarker, toastData } from "$lib/runes.svelte";
+	import { createPOIForm, selectedMarker } from "$lib/runes.svelte";
+	import { showToast } from "$lib/services/utils";
 
 	let {
 		id = "overview-map",
@@ -64,9 +65,7 @@
 					return;
 				}
 
-				toastData.message = "Something went wrong.";
-				toastData.type = ToastType.Danger;
-				toastData.visible = true;
+				showToast("Something went wrong.", ToastType.Danger, true);
 			});
 			marker.on("popupclose", () => {
 				selectedMarker.focused = false;
@@ -80,6 +79,17 @@
 		if (layer.isDefault) {
 			group.addTo(map);
 		}
+	}
+
+	export function clearLayers() {
+		Object.keys(overlays).forEach((title) => {
+			const group = overlays[title];
+			map.removeLayer(group);
+			control.removeLayer(group);
+		});
+
+		overlays = {};
+		markerMap.clear();
 	}
 
 	onMount(async () => {
@@ -115,6 +125,16 @@
 				populateLayer(layer);
 			});
 		}
+
+		map.on("click", (e: L.LeafletMouseEvent) => {
+			if (createPOIForm.visible) {
+				let popup = L.popup();
+
+				createPOIForm.lat = e.latlng.lat.toString();
+				createPOIForm.lng = e.latlng.lng.toString();
+				popup.setLatLng(e.latlng).setContent(`Location selected`).openOn(map);
+			}
+		});
 	});
 </script>
 

@@ -41,12 +41,20 @@ export type PointOfInterest = {
 	_id: string;
 };
 
+export type PointOfInterestInfo = Omit<PointOfInterest, "_id" | "categoryID">;
+
 export type Category = {
 	title: string;
 	img: Image;
 	userID: string;
 	_id: string;
 };
+
+export type CategoryInfo = Omit<Category, "_id" | "userID">;
+
+export interface CategoryWithPOIs extends Category {
+	pois: PointOfInterest[];
+}
 
 export enum ToastType {
 	Success = "success",

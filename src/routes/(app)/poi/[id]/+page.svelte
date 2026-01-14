@@ -1,16 +1,19 @@
 <script lang="ts">
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
-	import { refreshMap } from "$lib/services/utils.js";
+	import { refreshMap, refreshData } from "$lib/services/utils.js";
 	import { onMount } from "svelte";
 	import ImageCarousel from "./ImageCarousel.svelte";
 	import POIInformation from "$lib/components/POIInformation.svelte";
+	import { currentCategories, currentPOIs } from "$lib/runes.svelte.js";
+	import type { PageProps } from "./$types";
 
-	let { data } = $props();
+	let { data }: PageProps = $props();
 
 	let map: LeafletMap;
 
 	onMount(async () => {
-		await refreshMap(map);
+		await refreshData();
+		await refreshMap(map, currentCategories.categories, currentPOIs.pois);
 		map.moveTo(+data.poi.location.lat, +data.poi.location.lng);
 	});
 </script>

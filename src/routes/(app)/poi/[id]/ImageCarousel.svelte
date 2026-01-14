@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Image } from "$lib/types/types";
 
-	let { images = [] as Image[] } = $props();
+	let { images = [] as Image[], canDelete = false, onDelete = () => {} } = $props();
 </script>
 
 <div id="image-carousel" class="carousel slide">
@@ -19,9 +19,28 @@
 	</div>
 	<div class="carousel-inner">
 		{#each images as image, i (image.publicID)}
-			<div class="carousel-item {i === 0 ? 'active' : ''}">
+			<div class="carousel-item relative {i === 0 ? 'active' : ''}">
 				{#if image.url}
-					<img src={image.url} class="object-contain" alt="" />
+					<img
+						src={image.url}
+						class="object-contain"
+						style="max-height: 400px; max-width: 600px;"
+						alt=""
+					/>
+					{#if canDelete}
+						<!-- z-index ensures button is above control chevron buttons of carousel -->
+						<button
+							onclick={() => onDelete(image.publicID)}
+							type="button"
+							class="absolute end-2 top-2 z-10"
+						>
+							<span
+								class="material-symbols-outlined rounded-lg bg-slate-50 p-2 text-red-500 hover:bg-red-50"
+							>
+								delete
+							</span>
+						</button>
+					{/if}
 				{:else}
 					<img
 						src="https://placehold.co/600x400?text=No+images+found"

@@ -1,6 +1,7 @@
 import {
 	ToastType,
 	type Category,
+	type CategoryWithPOIs,
 	type MarkerSpec,
 	type PointOfInterest,
 	type ToastData
@@ -29,6 +30,12 @@ export const currentPOIs = $state({
 	pois: [] as PointOfInterest[]
 });
 
+export const currentUserData = $state({
+	categories: [] as Category[],
+	pois: [] as PointOfInterest[],
+	categoriesWithPOIs: [] as CategoryWithPOIs[]
+});
+
 export const toastData = $state({
 	message: "",
 	type: ToastType.Success,
@@ -38,4 +45,17 @@ export const toastData = $state({
 export const selectedMarker = $state({
 	focused: false,
 	spec: {} as MarkerSpec
+});
+
+export const createPOIForm = $state({
+	categoryId: "",
+	categoryTitle: "",
+	lat: "",
+	lng: "",
+	visible: false
+});
+
+export const addImageForm = $state({
+	poi: {} as PointOfInterest,
+	visible: false
 });
