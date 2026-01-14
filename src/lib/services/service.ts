@@ -56,6 +56,22 @@ export const service = {
 		}
 	},
 
+	async getAllUsers(): Promise<User[]> {
+		try {
+			const res = await apiClient.get("/users");
+
+			if (res.status === 200) {
+				return res.data;
+			}
+
+			return [];
+		} catch (err) {
+			console.error(err);
+
+			return [];
+		}
+	},
+
 	async getUser(id: string): Promise<User | null> {
 		try {
 			const res = await apiClient.get(`/users/${id}`);
