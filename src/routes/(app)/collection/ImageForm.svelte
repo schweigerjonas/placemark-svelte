@@ -64,6 +64,6 @@
 		</form>
 	</div>
 	<div>
-		<ImageCarousel {images} />
+		<ImageCarousel {images} canDelete={true} />
 	</div>
 </div>
