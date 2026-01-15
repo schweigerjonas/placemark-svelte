@@ -1,4 +1,5 @@
 import type { Category, DataSet, PointOfInterest } from "$lib/types/types";
+import { SvelteDate } from "svelte/reactivity";
 
 export function computeByCategory(categories: Category[], pois: PointOfInterest[]): DataSet {
 	const totalByCategory: DataSet = {
@@ -39,4 +40,34 @@ export function computeHeatmap(pois: PointOfInterest[]): Record<string, number> 
 	});
 
 	return stats;
+}
+
+export function computeRollingMonthlyTrend(pois: PointOfInterest[]): DataSet {
+	const labels = [];
+	const values = new Array(12).fill(0);
+	const now = new SvelteDate();
+
+	// get month labels for last 12 months
+	for (let i = 11; i >= 0; i--) {
+		const date = new SvelteDate(now.getFullYear(), now.getMonth() - i, 1);
+		labels.push(date.toLocaleString("default", { month: "short", year: "2-digit" }));
+	}
+
+	pois.forEach((poi) => {
+		if (poi.createdAt) {
+			const poiDate = new Date(poi.createdAt * 1000);
+			const monthsAgo =
+				(now.getFullYear() - poiDate.getFullYear()) * 12 + (now.getMonth() - poiDate.getMonth());
+
+			// poi created within last 12 months
+			if (monthsAgo >= 0 && monthsAgo < 12) {
+				values[11 - monthsAgo]++;
+			}
+		}
+	});
+
+	return {
+		labels: labels,
+		datasets: [{ values: values }]
+	};
 }
