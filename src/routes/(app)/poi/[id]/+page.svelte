@@ -9,12 +9,17 @@
 
 	let { data }: PageProps = $props();
 
-	let map: LeafletMap;
+	let terrainMap: LeafletMap;
+	let satelliteMap: LeafletMap;
 
 	onMount(async () => {
 		await refreshData();
-		await refreshMap(map, currentCategories.categories, currentPOIs.pois);
-		map.moveTo(+data.poi.location.lat, +data.poi.location.lng);
+
+		await refreshMap(terrainMap, currentCategories.categories, currentPOIs.pois);
+		terrainMap.moveTo(+data.poi.location.lat, +data.poi.location.lng);
+
+		await refreshMap(satelliteMap, currentCategories.categories, currentPOIs.pois);
+		satelliteMap.moveTo(+data.poi.location.lat, +data.poi.location.lng);
 	});
 </script>
 
@@ -26,9 +31,24 @@
 			<div class="rounded-r-lg bg-neutral-700 pr-2 pl-1 text-white">public</div>
 		</div>
 	</div>
-	<div class="flex items-center">
-		<div class="w-full grow">
-			<LeafletMap activeLayer="Satellite" height={60} zoom={11} bind:this={map} />
+	<div class="flex items-center gap-2">
+		<div class="w-1/2">
+			<LeafletMap
+				id="terrain-map"
+				activeLayer="Terrain"
+				height={60}
+				zoom={7}
+				bind:this={terrainMap}
+			/>
+		</div>
+		<div class="w-1/2">
+			<LeafletMap
+				id="satellite-map"
+				activeLayer="Satellite"
+				height={60}
+				zoom={13}
+				bind:this={satelliteMap}
+			/>
 		</div>
 	</div>
 	<div class="flex gap-2">
