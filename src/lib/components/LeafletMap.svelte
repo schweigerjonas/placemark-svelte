@@ -22,9 +22,16 @@
 	let overlays: Control.LayersObject = {};
 	let baseLayers: Control.LayersObject;
 	let L: typeof import("/home/jonas/repos/placemark-svelte/node_modules/@types/leaflet/index");
+	let selectionPopup: L.Popup | null = null;
 
 	// contains POI data for all markers
 	const markerMap = new SvelteMap<L.Marker, MarkerSpec>();
+
+	$effect(() => {
+		if (!createPOIForm.visible && selectionPopup) {
+			selectionPopup.close();
+		}
+	});
 
 	export async function addMarker(lat: number, lng: number, popupText: string) {
 		const marker = L.marker({ lat, lng }).addTo(map);
@@ -34,8 +41,8 @@
 		marker.bindPopup(popup);
 	}
 
-	export async function moveTo(lat: number, lng: number) {
-		map.flyTo({ lat: lat, lng: lng });
+	export async function moveTo(lat: number, lng: number, zoomLevel?: number) {
+		map.flyTo({ lat: lat, lng: lng }, zoomLevel);
 	}
 
 	export async function populateLayer(layer: MarkerLayer) {
@@ -128,11 +135,11 @@
 
 		map.on("click", (e: L.LeafletMouseEvent) => {
 			if (createPOIForm.visible) {
-				let popup = L.popup();
+				selectionPopup = L.popup();
 
 				createPOIForm.lat = e.latlng.lat.toString();
 				createPOIForm.lng = e.latlng.lng.toString();
-				popup.setLatLng(e.latlng).setContent(`Location selected`).openOn(map);
+				selectionPopup.setLatLng(e.latlng).setContent(`Location selected`).openOn(map);
 			}
 		});
 	});

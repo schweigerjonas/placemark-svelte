@@ -19,6 +19,12 @@
 		}
 	});
 
+	function handlePOICreated(lat: string, lng: string) {
+		if (map) {
+			map.moveTo(+lat, +lng, 11);
+		}
+	}
+
 	onMount(async () => {
 		if (!loggedInUser.token) await restoreSession();
 		await refreshCurrentUserData();
@@ -49,7 +55,7 @@
 	<div class="flex gap-3">
 		{#if createPOIForm.visible}
 			<div class="grow">
-				<POIForm />
+				<POIForm onCreate={handlePOICreated} />
 			</div>
 		{/if}
 		{#if addImageForm.visible}
