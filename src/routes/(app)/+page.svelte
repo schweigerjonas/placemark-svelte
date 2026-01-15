@@ -5,33 +5,17 @@
 	import { onMount } from "svelte";
 	import POIDetailCard from "./POIDetailCard.svelte";
 	import Chart from "svelte-frappe-charts";
+	import type { DataSet } from "$lib/types/types";
+	import { computeByCategory } from "$lib/services/chart-utils";
 
 	let map: LeafletMap;
-	let categoryNames: string[] = ["category"];
-	let counts: number[] = [0];
-
-	const totalByCategory = {
-		labels: categoryNames,
-		datasets: [
-			{
-				values: counts
-			}
-		]
-	};
+	let totalByCategory: DataSet;
 
 	onMount(async () => {
 		await refreshData();
 		await refreshMap(map, currentCategories.categories, currentPOIs.pois);
 
-		// get set of unique category titles
-		totalByCategory.labels = [
-			...new Set(currentCategories.categories.map((category) => category.title))
-		];
-		// get number of POIs per category
-		// for every category, get all POIs belonging to it and return the length
-		totalByCategory.datasets[0].values = currentCategories.categories.map(
-			(category) => currentPOIs.pois.filter((poi) => poi.categoryID === category._id).length
-		);
+		totalByCategory = computeByCategory(currentCategories.categories, currentPOIs.pois);
 	});
 </script>
 

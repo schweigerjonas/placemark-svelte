@@ -81,3 +81,8 @@ export interface MarkerLayer {
 	title: string;
 	markerSpecs: MarkerSpec[];
 }
+
+export interface DataSet {
+	labels: string[];
+	datasets: [{ values: number[] }];
+}
