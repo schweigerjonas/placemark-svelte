@@ -5,6 +5,9 @@
 	import { ToastType, type PointOfInterestInfo } from "$lib/types/types";
 	import { onDestroy } from "svelte";
 
+	// callback after new POI gets created; used for moving to map marker in parent component
+	let { onCreate }: { onCreate?: (lat: string, lng: string) => void } = $props();
+
 	let name = $state("");
 	let description = $state("");
 	let latitude = $state("");
@@ -34,6 +37,11 @@
 
 		if (success) {
 			showToast(`Point of Interest "${poi.name}" created.`, ToastType.Success, true);
+
+			if (onCreate) {
+				onCreate(latitude, longitude);
+			}
+
 			clearForm();
 			createPOIForm.visible = false;
 		} else {
