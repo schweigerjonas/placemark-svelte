@@ -5,33 +5,26 @@
 	import { onMount } from "svelte";
 	import POIDetailCard from "./POIDetailCard.svelte";
 	import Chart from "svelte-frappe-charts";
+	import type { DataSet } from "$lib/types/types";
+	import {
+		computeByCategory,
+		computeHeatmap,
+		computeRollingMonthlyTrend
+	} from "$lib/services/chart-utils";
+	import { SvelteDate } from "svelte/reactivity";
 
 	let map: LeafletMap;
-	let categoryNames: string[] = ["category"];
-	let counts: number[] = [0];
-
-	const totalByCategory = {
-		labels: categoryNames,
-		datasets: [
-			{
-				values: counts
-			}
-		]
-	};
+	let totalByCategory: DataSet;
+	let countByDayCreatedHeatmapData: Record<string, number>;
+	let trendByMonth: DataSet;
 
 	onMount(async () => {
 		await refreshData();
 		await refreshMap(map, currentCategories.categories, currentPOIs.pois);
 
-		// get set of unique category titles
-		totalByCategory.labels = [
-			...new Set(currentCategories.categories.map((category) => category.title))
-		];
-		// get number of POIs per category
-		// for every category, get all POIs belonging to it and return the length
-		totalByCategory.datasets[0].values = currentCategories.categories.map(
-			(category) => currentPOIs.pois.filter((poi) => poi.categoryID === category._id).length
-		);
+		totalByCategory = computeByCategory(currentCategories.categories, currentPOIs.pois);
+		countByDayCreatedHeatmapData = computeHeatmap(currentPOIs.pois);
+		trendByMonth = computeRollingMonthlyTrend(currentPOIs.pois);
 	});
 </script>
 
@@ -53,11 +46,35 @@
 	<div class="px-2">
 		<h2>Insights</h2>
 		<p>Visualizing our growing database of points of interest.</p>
-		<div class="w-1/2">
-			<div class="card p-2">
-				<small class="text-muted">Points of Interest per Category</small>
-				<Chart data={totalByCategory} type="pie" height={300} maxSlices={5} />
+		<div class="container flex flex-col gap-2">
+			<div class="row flex gap-2">
+				<div class="col card p-2">
+					<small class="text-muted">Points of Interest per Category</small>
+					<Chart data={totalByCategory} type="pie" height={300} maxSlices={5} />
+				</div>
+				<div class="col card flex flex-col p-2">
+					<small class="text-muted">Rolling Monthly Trend of Points of Interest Created</small>
+					<Chart data={trendByMonth} type="line" height={300} />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col card flex flex-col p-2">
+					<small class="text-muted">Point of Interest Creation Heatmap</small>
+					<div class="self-center justify-self-center pt-5">
+						<Chart
+							data={{
+								dataPoints: countByDayCreatedHeatmapData,
+								start: new SvelteDate(
+									new SvelteDate().setFullYear(new SvelteDate().getFullYear() - 1)
+								)
+							}}
+							type="heatmap"
+							height={300}
+						/>
+					</div>
+				</div>
 			</div>
 		</div>
+		<div class="w-1/2"></div>
 	</div>
 </div>
