@@ -17,3 +17,26 @@ export function computeByCategory(categories: Category[], pois: PointOfInterest[
 
 	return totalByCategory;
 }
+
+export function computeHeatmap(pois: PointOfInterest[]): Record<string, number> {
+	const stats: Record<string, number> = {};
+
+	pois.forEach((poi) => {
+		if (poi.createdAt) {
+			const date = new Date(poi.createdAt * 1000);
+
+			// normalize time to midnight
+			date.setHours(0, 0, 0, 0);
+
+			const timestamp = (date.getTime() / 1000).toString();
+
+			if (stats[timestamp]) {
+				stats[timestamp] += 1;
+			} else {
+				stats[timestamp] = 1;
+			}
+		}
+	});
+
+	return stats;
+}
