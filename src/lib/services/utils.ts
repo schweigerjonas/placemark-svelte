@@ -15,7 +15,6 @@ import type {
 	ToastType
 } from "$lib/types/types";
 import { service } from "./service";
-import { restoreSession } from "./session-utils";
 
 export function clearState() {
 	loggedInUser.name = "";
@@ -81,8 +80,6 @@ export async function refreshCurrentUserData() {
 
 // Setup Maps with Layers
 export async function refreshMap(map: LeafletMap, categories: Category[], pois: PointOfInterest[]) {
-	if (!loggedInUser.token) await restoreSession();
-
 	// remove any existing overlays or controls
 	map.clearLayers();
 
@@ -92,10 +89,11 @@ export async function refreshMap(map: LeafletMap, categories: Category[], pois: 
 		map.populateLayer(layer);
 	});
 
-	if (pois.length > 0) {
-		const lastPOI = pois[pois.length - 1];
-		if (lastPOI) map.moveTo(+lastPOI.location.lat, +lastPOI.location.lng);
-	}
+	// leads to errors when refreshMap is run inside $effect rune because map can be undefined there
+	// if (pois.length > 0) {
+	// 	const lastPOI = pois[pois.length - 1];
+	// 	if (lastPOI) map.moveTo(+lastPOI.location.lat, +lastPOI.location.lng);
+	// }
 }
 
 function prepareMarkerLayers(pois: PointOfInterest[], categories: Category[]): MarkerLayer[] {
