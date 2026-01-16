@@ -9,7 +9,7 @@ export const actions: Actions = {
 		const password = form.get("password") as string;
 
 		if (email === "" || password === "") {
-			throw redirect(307, "/");
+			throw redirect(307, "/login");
 		} else {
 			const session = await service.login(email, password);
 
@@ -24,7 +24,7 @@ export const actions: Actions = {
 				});
 				throw redirect(303, "/");
 			} else {
-				throw redirect(307, "/");
+				throw redirect(307, "/login");
 			}
 		}
 	}

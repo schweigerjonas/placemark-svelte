@@ -3,7 +3,7 @@
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
 	import UserCredentials from "$lib/components/UserCredentials.svelte";
 
-	let notification = $state("");
+	let notification = "";
 </script>
 
 {#if notification}
