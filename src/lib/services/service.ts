@@ -36,6 +36,7 @@ export const service = {
 
 				const session: Session = {
 					name: res.data.name,
+					email: email,
 					role: res.data.role,
 					token: res.data.token,
 					_id: res.data._id
