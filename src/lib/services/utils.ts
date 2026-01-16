@@ -17,6 +17,26 @@ import type {
 import { service } from "./service";
 import { restoreSession } from "./session-utils";
 
+export function clearState() {
+	loggedInUser.name = "";
+	loggedInUser.email = "";
+	loggedInUser.role = "";
+	loggedInUser.token = "";
+	loggedInUser._id = "";
+
+	currentUser.firstName = "";
+	currentUser.lastName = "";
+	currentUser.email = "";
+	currentUser.role = "";
+
+	currentCategories.categories = [];
+	currentPOIs.pois = [];
+
+	currentUserData.categories = [];
+	currentUserData.pois = [];
+	currentUserData.categoriesWithPOIs = [];
+}
+
 export function showToast(message: string, type: ToastType, visible: boolean) {
 	toastData.message = message;
 	toastData.type = type;
