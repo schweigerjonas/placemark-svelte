@@ -8,7 +8,6 @@ import type {
 	User,
 	UserInfo
 } from "$lib/types/types";
-import { saveSession } from "./session-utils";
 import { refreshCurrentUser, refreshCurrentUserData, refreshData } from "./utils";
 
 export const apiClient = axios.create({
@@ -41,9 +40,6 @@ export const service = {
 					token: res.data.token,
 					_id: res.data._id
 				};
-
-				saveSession(session, email);
-				refreshCurrentUser();
 
 				return session;
 			}
