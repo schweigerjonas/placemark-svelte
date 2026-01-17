@@ -1,7 +1,7 @@
 import { google } from "$lib/server/oauth";
 import { service } from "$lib/services/service";
 import { redirect, type RequestEvent } from "@sveltejs/kit";
-import { decodeIdToken } from "arctic";
+import { decodeIdToken, OAuth2Tokens } from "arctic";
 
 export async function GET({ url, cookies }: RequestEvent): Promise<Response> {
 	const code = url.searchParams.get("code");
@@ -15,33 +15,34 @@ export async function GET({ url, cookies }: RequestEvent): Promise<Response> {
 		});
 	}
 
+	let tokens: OAuth2Tokens;
+
 	try {
-		const tokens = await google.validateAuthorizationCode(code, codeVerifier);
-		const claims = decodeIdToken(tokens.idToken()) as { sub: string; name: string; email: string };
+		tokens = await google.validateAuthorizationCode(code, codeVerifier);
+	} catch (err) {
+		console.error(err);
 
-		// Pass to Hapi via your service
-		const session = await service.loginWithGoogle(claims.sub, claims.name, claims.email);
-
-		if (session) {
-			const userJson = JSON.stringify(session);
-
-			cookies.set("placemark-user", userJson, {
-				path: "/",
-				httpOnly: true,
-				sameSite: "lax",
-				secure: import.meta.env.PROD,
-				maxAge: 60 * 60 * 24 * 7
-			});
-
-			throw redirect(302, "/");
-		}
-	} catch (e) {
-		console.error(e);
-
-		return new Response("Google authentication failed", {
+		return new Response("Failed to validate authorization code", {
 			status: 400
 		});
 	}
 
-	throw redirect(302, "/login?error=google_failed");
+	const claims = decodeIdToken(tokens.idToken()) as { sub: string; name: string; email: string };
+	const session = await service.loginWithGoogle(claims.sub, claims.name, claims.email);
+
+	if (!session) {
+		throw redirect(302, "/login?error=oauth_failed");
+	}
+
+	const userJson = JSON.stringify(session);
+
+	cookies.set("placemark-user", userJson, {
+		path: "/",
+		httpOnly: true,
+		sameSite: "lax",
+		secure: import.meta.env.PROD,
+		maxAge: 60 * 60 * 24 * 7
+	});
+
+	throw redirect(302, "/");
 }
