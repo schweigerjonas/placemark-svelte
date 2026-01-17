@@ -23,6 +23,11 @@
 	let baseLayers: Control.LayersObject;
 	let L: typeof import("/home/jonas/repos/placemark-svelte/node_modules/@types/leaflet/index");
 	let selectionPopup: L.Popup | null = null;
+	let resolveMapReady: (value: boolean) => void;
+
+	const mapReady = new Promise((resolve) => {
+		resolveMapReady = resolve;
+	});
 
 	// contains POI data for all markers
 	const markerMap = new SvelteMap<L.Marker, MarkerSpec>();
@@ -33,6 +38,10 @@
 		}
 	});
 
+	export function ready() {
+		return mapReady;
+	}
+
 	export async function addMarker(lat: number, lng: number, popupText: string) {
 		const marker = L.marker({ lat, lng }).addTo(map);
 		const popup = L.popup({ closeOnClick: false });
@@ -42,7 +51,11 @@
 	}
 
 	export async function moveTo(lat: number, lng: number, zoomLevel?: number) {
-		map.flyTo({ lat: lat, lng: lng }, zoomLevel);
+		if (map) {
+			map.flyTo({ lat: lat, lng: lng }, zoomLevel);
+		} else {
+			console.warn("moveTo called before map was initialized");
+		}
 	}
 
 	export async function populateLayer(layer: MarkerLayer) {
@@ -125,6 +138,9 @@
 			minZoom: minZoom,
 			layers: [defaultLayer]
 		});
+
+		resolveMapReady(true);
+
 		control = leaflet.control.layers(baseLayers, overlays).addTo(map);
 
 		if (markerLayers) {
