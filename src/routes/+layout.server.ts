@@ -5,10 +5,17 @@ export const load: LayoutServerLoad = ({ cookies }) => {
 	const cookieStr = cookies.get("placemark-user") as string;
 
 	if (cookieStr) {
-		const session = JSON.parse(cookieStr) as Session;
+		try {
+			const session = JSON.parse(cookieStr) as Session;
 
-		return {
-			session: session
-		};
+			return {
+				session: session
+			};
+		} catch (e) {
+			console.error(e);
+			return { session: null };
+		}
+	} else {
+		return { session: null };
 	}
 };

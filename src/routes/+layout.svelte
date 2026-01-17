@@ -6,6 +6,7 @@
 	import SuccessToast from "$lib/components/SuccessToast.svelte";
 	import { loggedInUser } from "$lib/runes.svelte";
 	import type { PageProps } from "./(app)/$types";
+	import { clearState } from "$lib/services/utils";
 
 	let { children, data }: PageProps & { children: Snippet } = $props();
 
@@ -19,11 +20,7 @@
 			loggedInUser.token = session.token;
 			loggedInUser._id = session._id;
 		} else {
-			loggedInUser.name = "";
-			loggedInUser.email = "";
-			loggedInUser.role = "";
-			loggedInUser.token = "";
-			loggedInUser._id = "";
+			clearState();
 		}
 	});
 </script>
