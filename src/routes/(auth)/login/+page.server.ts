@@ -9,7 +9,7 @@ export const actions: Actions = {
 		const password = form.get("password") as string;
 
 		if (email === "" || password === "") {
-			return fail(400, { message: "Email or password missing." });
+			return fail(400, { notification: "Email or password missing." });
 		} else {
 			const session = await service.login(email, password);
 
@@ -24,7 +24,7 @@ export const actions: Actions = {
 				});
 				throw redirect(303, "/");
 			} else {
-				return fail(500, { message: "Email or password wrong." });
+				return fail(500, { notification: "Email or password wrong." });
 			}
 		}
 	}

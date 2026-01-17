@@ -8,8 +8,8 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-{#if form?.message}
-	<ErrorNotification notification={form?.message} />
+{#if form?.notification}
+	<ErrorNotification notification={form?.notification} />
 {/if}
 <form method="POST" action="?/signup" use:enhance>
 	<UserDetails />

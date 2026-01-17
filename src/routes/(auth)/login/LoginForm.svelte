@@ -7,8 +7,8 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-{#if form?.message}
-	<ErrorNotification notification={form?.message} />
+{#if form?.notification}
+	<ErrorNotification notification={form?.notification} />
 {/if}
 <div>
 	<form method="POST" action="?/login" use:enhance>

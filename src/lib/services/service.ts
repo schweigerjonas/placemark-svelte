@@ -73,9 +73,13 @@ export const service = {
 		}
 	},
 
-	async getUserById(id: string): Promise<User | null> {
+	async getUserById(id: string, token: string): Promise<User | null> {
 		try {
-			const res = await apiClient.get(`/users/${id}`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.get(`/users/${id}`, config);
 
 			if (res.status === 200) {
 				return res.data;
@@ -89,9 +93,13 @@ export const service = {
 		}
 	},
 
-	async updateUser(id: string, updateDetails: UserInfo): Promise<boolean> {
+	async updateUser(id: string, updateDetails: UserInfo, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.put(`/users/${id}`, updateDetails);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.put(`/users/${id}`, updateDetails, config);
 
 			if (res.status === 201) {
 				refreshCurrentUser();
@@ -107,9 +115,13 @@ export const service = {
 		}
 	},
 
-	async updateUserPassword(id: string, updateDetails: UserInfo): Promise<boolean> {
+	async updateUserPassword(id: string, updateDetails: UserInfo, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.put(`/users/${id}/password`, updateDetails);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.put(`/users/${id}/password`, updateDetails, config);
 
 			if (res.status === 201) {
 				return true;

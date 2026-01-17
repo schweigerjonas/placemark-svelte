@@ -9,7 +9,7 @@
 	let notification = $state("");
 
 	async function deleteAccount() {
-		let deleted = await service.deleteUser(loggedInUser._id);
+		let deleted = await service.deleteUserById(loggedInUser._id, loggedInUser.token);
 
 		if (deleted) {
 			showToast("Account deleted.", ToastType.Success, true);

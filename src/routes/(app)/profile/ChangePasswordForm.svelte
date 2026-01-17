@@ -20,10 +20,14 @@
 			return;
 		}
 
-		const updated = await service.updateUserPassword(loggedInUser._id, {
-			password: newPassword,
-			currentPassword: currentPassword
-		} as UserInfo);
+		const updated = await service.updateUserPassword(
+			loggedInUser._id,
+			{
+				password: newPassword,
+				currentPassword: currentPassword
+			} as UserInfo,
+			loggedInUser.token
+		);
 
 		if (updated) {
 			showToast("Password updated.", ToastType.Success, true);
