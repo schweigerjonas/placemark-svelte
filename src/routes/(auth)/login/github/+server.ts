@@ -10,8 +10,8 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	event.cookies.set("github_oauth_state", state, {
 		path: "/",
 		httpOnly: true,
-		maxAge: 60 * 10,
-		sameSite: "lax"
+		sameSite: "lax",
+		maxAge: 60 * 10
 	});
 
 	return new Response(null, {
