@@ -3,8 +3,17 @@
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
 	import UserCredentials from "$lib/components/UserCredentials.svelte";
 	import UserDetails from "$lib/components/UserDetails.svelte";
+	import type { ActionData } from "./$types";
 
-	let notification = "";
+	let { form }: { form: ActionData } = $props();
+
+	let notification = $state("");
+
+	$effect(() => {
+		if (form?.message) {
+			notification = form?.message;
+		}
+	});
 </script>
 
 {#if notification}
