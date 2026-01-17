@@ -1,10 +1,10 @@
 <script lang="ts">
+	import ImageCarousel from "$lib/components/ImageCarousel.svelte";
 	import { addImageForm } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
 	import { showToast } from "$lib/services/utils";
 	import { ToastType, type Image, type PointOfInterest } from "$lib/types/types";
 	import { onDestroy } from "svelte";
-	import ImageCarousel from "../poi/[id]/ImageCarousel.svelte";
 
 	let fileInput: HTMLInputElement;
 
