@@ -25,15 +25,15 @@ export const actions: Actions = {
 				const id = form.get("id") as string;
 
 				if (!id) {
-					return fail(400, { success: false, message: "Something went wrong" });
+					return fail(400, { success: false, message: "Something went wrong." });
 				}
 
 				const success = await service.deleteUserById(id, session.token);
 
 				if (success) {
-					return { success: true };
+					return { success: true, message: "User deleted." };
 				} else {
-					return fail(500, { success: false, message: "Failed to delete user" });
+					return fail(500, { success: false, message: "Failed to delete user." });
 				}
 			}
 		}

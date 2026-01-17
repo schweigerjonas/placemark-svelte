@@ -9,9 +9,9 @@
 
 	$effect(() => {
 		if (form?.success) {
-			showToast("User deleted.", ToastType.Success, true);
+			showToast(form?.message, ToastType.Success, true);
 		} else if (form?.message) {
-			showToast("Failed to delete user.", ToastType.Danger, true);
+			showToast(form?.message, ToastType.Danger, true);
 		}
 	});
 </script>
