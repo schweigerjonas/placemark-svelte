@@ -47,7 +47,7 @@
 											showToast(data.deleteImage.message, ToastType.Success, true);
 										}
 
-										onDelete();
+										await onDelete();
 									} else if (result.type === "failure") {
 										const data = result.data as ActionData;
 
