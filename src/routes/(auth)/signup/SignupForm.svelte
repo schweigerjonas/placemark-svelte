@@ -6,18 +6,10 @@
 	import type { ActionData } from "./$types";
 
 	let { form }: { form: ActionData } = $props();
-
-	let notification = $state("");
-
-	$effect(() => {
-		if (form?.message) {
-			notification = form?.message;
-		}
-	});
 </script>
 
-{#if notification}
-	<ErrorNotification {notification} />
+{#if form?.message}
+	<ErrorNotification notification={form?.message} />
 {/if}
 <form method="POST" action="?/signup" use:enhance>
 	<UserDetails />
