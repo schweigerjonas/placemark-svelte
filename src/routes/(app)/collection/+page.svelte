@@ -1,5 +1,4 @@
 <script lang="ts">
-	import CategoryItem from "$lib/components/CategoryItem.svelte";
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
 	import { addImageForm, createPOIForm, currentUserData } from "$lib/runes.svelte";
 	import { refreshMap } from "$lib/services/utils";
@@ -7,6 +6,7 @@
 	import CategoryForm from "./CategoryForm.svelte";
 	import ImageForm from "./ImageForm.svelte";
 	import type { PageProps } from "./$types";
+	import CategoryItem from "./CategoryItem.svelte";
 
 	let { data, form }: PageProps = $props();
 
@@ -64,7 +64,7 @@
 	<div class="flex gap-3">
 		{#if createPOIForm.visible}
 			<div class="grow">
-				<POIForm onCreate={handlePOICreated} />
+				<POIForm {form} onCreate={handlePOICreated} />
 			</div>
 		{/if}
 		{#if addImageForm.visible}

@@ -9,10 +9,10 @@
 	let formVisible = $state(false);
 
 	$effect(() => {
-		if (form?.createCategory.success) {
+		if (form?.createCategory?.success) {
 			showToast(form?.createCategory.message, ToastType.Success, true);
 			formVisible = false;
-		} else if (form?.createCategory.message) {
+		} else if (form?.createCategory?.message) {
 			showToast(form?.createCategory.message, ToastType.Danger, true);
 		}
 	});

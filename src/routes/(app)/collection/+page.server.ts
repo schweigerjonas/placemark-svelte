@@ -1,7 +1,7 @@
 import { service } from "$lib/services/service";
 import { fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import type { CategoryInfo, Session } from "$lib/types/types";
+import type { CategoryInfo, PointOfInterestInfo, Session } from "$lib/types/types";
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { session } = await parent();
@@ -60,7 +60,7 @@ export const actions: Actions = {
 					return {
 						createCategory: {
 							success: true,
-							message: `Category ${categoryDetails.title} created.`
+							message: `Category "${categoryDetails.title}" created.`
 						}
 					};
 				} else {
@@ -68,6 +68,65 @@ export const actions: Actions = {
 						createCategory: {
 							success: false,
 							message: "Could not create category."
+						}
+					});
+				}
+			}
+		}
+	},
+	createPOI: async ({ request, cookies }) => {
+		const cookieStr = cookies.get("placemark-user") as string;
+
+		if (cookieStr) {
+			const session = JSON.parse(cookieStr) as Session;
+
+			if (session) {
+				const form = await request.formData();
+				const categoryId = form.get("categoryId") as string;
+				const poiDetails = {
+					name: form.get("poiName") as string,
+					description: form.get("poiDescription") as string,
+					location: {
+						lat: form.get("poiLatitude") as string,
+						lng: form.get("poiLongitude") as string
+					},
+					img: [
+						{
+							url: "",
+							publicID: ""
+						}
+					]
+				} as PointOfInterestInfo;
+
+				if (
+					!poiDetails.name ||
+					!poiDetails.description ||
+					!poiDetails.location.lat ||
+					!poiDetails.location.lng
+				) {
+					return fail(400, {
+						createPOI: { success: false, message: "Something went wrong.", lat: "", lng: "" }
+					});
+				}
+
+				const success = await service.createPOI(categoryId, poiDetails, session.token);
+
+				if (success) {
+					return {
+						createPOI: {
+							success: true,
+							message: `Point of Interest "${poiDetails.name}" created.`,
+							lat: poiDetails.location.lat,
+							lng: poiDetails.location.lng
+						}
+					};
+				} else {
+					return fail(500, {
+						createPOI: {
+							success: false,
+							message: "Could not create point of interest.",
+							lat: "",
+							lng: ""
 						}
 					});
 				}

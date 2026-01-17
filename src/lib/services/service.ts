@@ -235,11 +235,13 @@ export const service = {
 		}
 	},
 
-	async createPOI(id: string, poi: PointOfInterestInfo): Promise<boolean> {
+	async createPOI(id: string, poi: PointOfInterestInfo, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.post(`/categories/${id}/pois`, poi);
-			await refreshCurrentUserData();
-			await refreshData();
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.post(`/categories/${id}/pois`, poi, config);
 
 			return res.status === 201;
 		} catch (err) {
