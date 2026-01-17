@@ -53,9 +53,13 @@ export const service = {
 		}
 	},
 
-	async getAllUsers(): Promise<User[]> {
+	async getAllUsers(token: string): Promise<User[]> {
 		try {
-			const res = await apiClient.get("/users");
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.get("/users", config);
 
 			if (res.status === 200) {
 				return res.data;
@@ -69,7 +73,7 @@ export const service = {
 		}
 	},
 
-	async getUser(id: string): Promise<User | null> {
+	async getUserById(id: string): Promise<User | null> {
 		try {
 			const res = await apiClient.get(`/users/${id}`);
 
@@ -119,9 +123,13 @@ export const service = {
 		}
 	},
 
-	async deleteUser(id: string): Promise<boolean> {
+	async deleteUserById(id: string, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.delete(`/users/${id}`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.delete(`/users/${id}`, config);
 
 			return res.status === 204;
 		} catch (err) {
