@@ -43,7 +43,7 @@ export function showToast(message: string, type: ToastType, visible: boolean) {
 }
 
 export async function refreshCurrentUser() {
-	const user = await service.getUserById(loggedInUser._id);
+	const user = await service.getUserById(loggedInUser._id, loggedInUser.token);
 
 	if (user) {
 		currentUser.firstName = user.firstName;

@@ -1,4 +1,4 @@
-import { fail, type Actions } from "@sveltejs/kit";
+import { fail, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import type { Session, UserInfo } from "$lib/types/types";
 import { service } from "$lib/services/service";
@@ -63,7 +63,7 @@ export const actions: Actions = {
 				}
 			}
 		}
-	}
+	},
 	// changePassword: async ({ request, cookies }) => {
 	// 	const cookieStr = cookies.get("placemark-user") as string;
 	//
@@ -74,16 +74,31 @@ export const actions: Actions = {
 	// 			const form = await request.formData();
 	// 		}
 	// 	}
-	// },
-	// deleteAccount: async ({ request, cookies }) => {
-	// 	const cookieStr = cookies.get("placemark-user") as string;
-	//
-	// 	if (cookieStr) {
-	// 		const session = JSON.parse(cookieStr) as Session;
-	//
-	// 		if (session) {
-	// 			const form = await request.formData();
-	// 		}
-	// 	}
 	// }
+	deleteAccount: async ({ request, cookies }) => {
+		const cookieStr = cookies.get("placemark-user") as string;
+
+		if (cookieStr) {
+			const session = JSON.parse(cookieStr) as Session;
+
+			if (session) {
+				const form = await request.formData();
+				const id = form.get("id") as string;
+
+				if (!id) {
+					return fail(400, { deleteAccount: { success: false, message: "Something went wrong." } });
+				}
+
+				const success = await service.deleteUserById(id, session.token);
+
+				if (success) {
+					throw redirect(303, "/logout");
+				} else {
+					return fail(500, {
+						deleteAccount: { success: false, message: "Couldn't delete account." }
+					});
+				}
+			}
+		}
+	}
 };
