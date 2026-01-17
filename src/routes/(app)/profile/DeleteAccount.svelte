@@ -1,23 +1,19 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
-	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
+	import { enhance } from "$app/forms";
 	import { loggedInUser } from "$lib/runes.svelte";
-	import { service } from "$lib/services/service";
 	import { showToast } from "$lib/services/utils";
 	import { ToastType } from "$lib/types/types";
+	import type { ActionData } from "./$types";
 
-	let notification = $state("");
+	let { form }: { form: ActionData } = $props();
 
-	async function deleteAccount() {
-		let deleted = await service.deleteUser(loggedInUser._id);
-
-		if (deleted) {
-			showToast("Account deleted.", ToastType.Success, true);
-			goto("/logout");
-		} else {
-			notification = "Something went wrong.";
+	$effect(() => {
+		if (form?.deleteAccount?.success) {
+			showToast(form?.deleteAccount.message, ToastType.Success, true);
+		} else if (form?.deleteAccount?.message) {
+			showToast(form?.deleteAccount.message, ToastType.Danger, true);
 		}
-	}
+	});
 </script>
 
 <div>
@@ -26,8 +22,8 @@
 	</h5>
 	<hr />
 	<p>Once you delete your account, there is no going back.</p>
-	<button onclick={() => deleteAccount()} class="btn btn-danger">Delete account</button>
-	{#if notification}
-		<ErrorNotification {notification} />
-	{/if}
+	<form method="POST" action="?/deleteAccount" use:enhance>
+		<input type="hidden" name="id" value={loggedInUser._id} />
+		<button type="submit" class="btn btn-danger">Delete account</button>
+	</form>
 </div>

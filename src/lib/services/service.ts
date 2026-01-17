@@ -8,8 +8,6 @@ import type {
 	User,
 	UserInfo
 } from "$lib/types/types";
-import { saveSession } from "./session-utils";
-import { refreshCurrentUser, refreshCurrentUserData, refreshData } from "./utils";
 
 export const apiClient = axios.create({
 	baseURL: "http://localhost:3000/api"
@@ -37,13 +35,11 @@ export const service = {
 
 				const session: Session = {
 					name: res.data.name,
+					email: email,
 					role: res.data.role,
 					token: res.data.token,
 					_id: res.data._id
 				};
-
-				saveSession(session, email);
-				refreshCurrentUser();
 
 				return session;
 			}
@@ -56,9 +52,13 @@ export const service = {
 		}
 	},
 
-	async getAllUsers(): Promise<User[]> {
+	async getAllUsers(token: string): Promise<User[]> {
 		try {
-			const res = await apiClient.get("/users");
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.get("/users", config);
 
 			if (res.status === 200) {
 				return res.data;
@@ -72,9 +72,13 @@ export const service = {
 		}
 	},
 
-	async getUser(id: string): Promise<User | null> {
+	async getUserById(id: string, token: string): Promise<User | null> {
 		try {
-			const res = await apiClient.get(`/users/${id}`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.get(`/users/${id}`, config);
 
 			if (res.status === 200) {
 				return res.data;
@@ -88,27 +92,13 @@ export const service = {
 		}
 	},
 
-	async updateUser(id: string, updateDetails: UserInfo): Promise<boolean> {
+	async updateUser(id: string, updateDetails: UserInfo, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.put(`/users/${id}`, updateDetails);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
 
-			if (res.status === 201) {
-				refreshCurrentUser();
-
-				return true;
-			}
-
-			return false;
-		} catch (err) {
-			console.error(err);
-
-			return false;
-		}
-	},
-
-	async updateUserPassword(id: string, updateDetails: UserInfo): Promise<boolean> {
-		try {
-			const res = await apiClient.put(`/users/${id}/password`, updateDetails);
+			const res = await apiClient.put(`/users/${id}`, updateDetails, config);
 
 			if (res.status === 201) {
 				return true;
@@ -122,9 +112,33 @@ export const service = {
 		}
 	},
 
-	async deleteUser(id: string): Promise<boolean> {
+	async updateUserPassword(id: string, updateDetails: UserInfo, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.delete(`/users/${id}`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.put(`/users/${id}/password`, updateDetails, config);
+
+			if (res.status === 201) {
+				return true;
+			}
+
+			return false;
+		} catch (err) {
+			console.error(err);
+
+			return false;
+		}
+	},
+
+	async deleteUserById(id: string, token: string): Promise<boolean> {
+		try {
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.delete(`/users/${id}`, config);
 
 			return res.status === 204;
 		} catch (err) {
@@ -134,11 +148,13 @@ export const service = {
 		}
 	},
 
-	async createCategory(id: string, category: CategoryInfo): Promise<boolean> {
+	async createCategory(id: string, category: CategoryInfo, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.post(`/users/${id}/categories`, category);
-			await refreshCurrentUserData();
-			await refreshData();
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.post(`/users/${id}/categories`, category, config);
 
 			return res.status === 201;
 		} catch (err) {
@@ -164,9 +180,13 @@ export const service = {
 		}
 	},
 
-	async getUserCategories(id: string): Promise<Category[]> {
+	async getUserCategories(id: string, token: string): Promise<Category[]> {
 		try {
-			const res = await apiClient.get(`/users/${id}/categories`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.get(`/users/${id}/categories`, config);
 
 			if (res.status === 200) {
 				return res.data;
@@ -180,9 +200,13 @@ export const service = {
 		}
 	},
 
-	async getCategoryById(id: string): Promise<Category | null> {
+	async getCategoryById(id: string, token: string): Promise<Category | null> {
 		try {
-			const res = await apiClient.get(`/categories/${id}`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.get(`/categories/${id}`, config);
 
 			if (res.status === 200) {
 				return res.data;
@@ -196,11 +220,13 @@ export const service = {
 		}
 	},
 
-	async deleteCategoryById(id: string): Promise<boolean> {
+	async deleteCategoryById(id: string, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.delete(`/categories/${id}`);
-			await refreshCurrentUserData();
-			await refreshData();
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.delete(`/categories/${id}`, config);
 
 			return res.status === 204;
 		} catch (err) {
@@ -210,11 +236,13 @@ export const service = {
 		}
 	},
 
-	async createPOI(id: string, poi: PointOfInterestInfo): Promise<boolean> {
+	async createPOI(id: string, poi: PointOfInterestInfo, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.post(`/categories/${id}/pois`, poi);
-			await refreshCurrentUserData();
-			await refreshData();
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.post(`/categories/${id}/pois`, poi, config);
 
 			return res.status === 201;
 		} catch (err) {
@@ -240,9 +268,13 @@ export const service = {
 		}
 	},
 
-	async getCategoryPOIs(id: string): Promise<PointOfInterest[]> {
+	async getCategoryPOIs(id: string, token: string): Promise<PointOfInterest[]> {
 		try {
-			const res = await apiClient.get(`/categories/${id}/pois`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.get(`/categories/${id}/pois`, config);
 
 			if (res.status === 200) {
 				return res.data;
@@ -256,9 +288,13 @@ export const service = {
 		}
 	},
 
-	async getPOIById(id: string): Promise<PointOfInterest | null> {
+	async getPOIById(id: string, token: string): Promise<PointOfInterest | null> {
 		try {
-			const res = await apiClient.get(`/pois/${id}`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.get(`/pois/${id}`, config);
 			if (res.status === 200) {
 				return res.data;
 			}
@@ -271,13 +307,15 @@ export const service = {
 		}
 	},
 
-	async updatePOI(id: string, updateDetails: PointOfInterestInfo): Promise<boolean> {
+	async updatePOI(id: string, updateDetails: PointOfInterestInfo, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.put(`/pois/${id}`, updateDetails);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.put(`/pois/${id}`, updateDetails, config);
 
 			if (res.status === 201) {
-				await refreshCurrentUserData();
-				await refreshData();
 				return true;
 			}
 			return false;
@@ -288,11 +326,13 @@ export const service = {
 		}
 	},
 
-	async deletePOIById(id: string): Promise<boolean> {
+	async deletePOIById(id: string, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.delete(`/pois/${id}`);
-			await refreshCurrentUserData();
-			await refreshData();
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.delete(`/pois/${id}`, config);
 
 			return res.status === 204;
 		} catch (err) {
@@ -302,12 +342,16 @@ export const service = {
 		}
 	},
 
-	async addImageToPOI(poi: PointOfInterest, file: File): Promise<boolean> {
+	async addImageToPOI(poi: PointOfInterest, file: File, token: string): Promise<boolean> {
 		try {
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
 			const formData = new FormData();
 			formData.append("imageFile", file);
 
-			const res = await apiClient.post(`/images`, formData);
+			const res = await apiClient.post(`/images`, formData, config);
 
 			if (res.status !== 201) {
 				console.error("image upload failed");
@@ -327,15 +371,12 @@ export const service = {
 				img: images
 			};
 
-			const updateSuccess = await this.updatePOI(poi._id, payload);
+			const updateSuccess = await this.updatePOI(poi._id, payload, token);
 
 			if (!updateSuccess) {
 				console.error("poi update failed");
 				return false;
 			}
-
-			await refreshCurrentUserData();
-			await refreshData();
 
 			return true;
 		} catch (err) {
@@ -344,9 +385,13 @@ export const service = {
 			return false;
 		}
 	},
-	async deleteImageFromPOI(poi: PointOfInterest, imageId: string): Promise<boolean> {
+	async deleteImageFromPOI(poi: PointOfInterest, imageId: string, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.delete(`/images/${imageId}`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.delete(`/images/${imageId}`, config);
 
 			if (res.status !== 204) {
 				console.error("image deletion failed");
@@ -365,15 +410,12 @@ export const service = {
 				img: images
 			};
 
-			const updateSuccess = await this.updatePOI(poi._id, payload);
+			const updateSuccess = await this.updatePOI(poi._id, payload, token);
 
 			if (!updateSuccess) {
 				console.error("poi update failed");
 				return false;
 			}
-
-			await refreshCurrentUserData();
-			await refreshData();
 
 			return true;
 		} catch (err) {

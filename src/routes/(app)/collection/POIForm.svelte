@@ -1,12 +1,14 @@
 <script lang="ts">
+	import { enhance } from "$app/forms";
 	import { createPOIForm } from "$lib/runes.svelte";
-	import { service } from "$lib/services/service";
-	import { showToast } from "$lib/services/utils";
-	import { ToastType, type PointOfInterestInfo } from "$lib/types/types";
 	import { onDestroy } from "svelte";
+	import type { ActionData } from "./$types";
+	import { ToastType } from "$lib/types/types";
+	import { showToast } from "$lib/services/utils";
 
 	// callback after new POI gets created; used for moving to map marker in parent component
-	let { onCreate }: { onCreate?: (lat: string, lng: string) => void } = $props();
+	let { onCreate, form }: { onCreate?: (lat: string, lng: string) => void; form: ActionData } =
+		$props();
 
 	let name = $state("");
 	let description = $state("");
@@ -18,36 +20,19 @@
 		if (createPOIForm.lng) longitude = createPOIForm.lng;
 	});
 
-	async function create() {
-		const poi: PointOfInterestInfo = {
-			name: name,
-			description: description,
-			location: {
-				lat: latitude,
-				lng: longitude
-			},
-			img: [
-				{
-					url: "",
-					publicID: ""
-				}
-			]
-		};
-		const success = await service.createPOI(createPOIForm.categoryId, poi);
-
-		if (success) {
-			showToast(`Point of Interest "${poi.name}" created.`, ToastType.Success, true);
+	$effect(() => {
+		if (form?.createPOI?.success) {
+			showToast(form?.createPOI.message, ToastType.Success, true);
 
 			if (onCreate) {
-				onCreate(latitude, longitude);
+				onCreate(form?.createPOI.lat, form?.createPOI.lng);
 			}
 
-			clearForm();
-			createPOIForm.visible = false;
-		} else {
-			showToast("Error: Could not create Point of Interest.", ToastType.Danger, true);
+			close();
+		} else if (form?.createPOI?.message) {
+			showToast(form?.createPOI.message, ToastType.Danger, true);
 		}
-	}
+	});
 
 	function close() {
 		clearForm();
@@ -66,10 +51,7 @@
 		longitude = "";
 	}
 
-	onDestroy(() => {
-		clearForm();
-		createPOIForm.visible = false;
-	});
+	onDestroy(() => close());
 </script>
 
 <div class="card p-3">
@@ -82,7 +64,8 @@
 			aria-label="Close create point of interest form"
 		></button>
 	</div>
-	<form onsubmit={create} class="flex flex-col gap-3">
+	<form method="POST" action="?/createPOI" class="flex flex-col gap-3" use:enhance>
+		<input type="hidden" name="categoryId" value={createPOIForm.categoryId} />
 		<div class="w-2/3 grow">
 			<label class="form-label font-bold" for="poi-name">Name</label>
 			<input
@@ -90,7 +73,7 @@
 				type="text"
 				class="form-control"
 				id="poi-name"
-				name="poi-name"
+				name="poiName"
 				placeholder="Name"
 				required
 			/>
@@ -102,7 +85,7 @@
 				class="form-control"
 				rows="4"
 				id="poi-description"
-				name="poi-description"
+				name="poiDescription"
 				placeholder="Description"
 				required
 			></textarea>
@@ -115,7 +98,7 @@
 					type="text"
 					class="form-control"
 					id="poi-latitude"
-					name="poi-latitude"
+					name="poiLatitude"
 					placeholder="Latitude (e.g. 51.1657)"
 				/>
 				<input
@@ -123,7 +106,7 @@
 					type="text"
 					class="form-control"
 					id="poi-longitude"
-					name="poi-longitude"
+					name="poiLongitude"
 					placeholder="Longitude (e.g. 10.4515)"
 				/>
 			</div>

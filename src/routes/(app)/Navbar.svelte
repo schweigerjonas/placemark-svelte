@@ -49,7 +49,7 @@
 									</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="/logout">
+									<a data-sveltekit-preload-data="tap" class="dropdown-item" href="/logout">
 										<div class="flex items-center gap-2">
 											<span class="material-symbols-outlined">logout</span>
 											<span>Logout</span>

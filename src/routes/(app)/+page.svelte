@@ -1,30 +1,37 @@
 <script lang="ts">
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
 	import { currentCategories, currentPOIs, selectedMarker } from "$lib/runes.svelte";
-	import { refreshMap, refreshData } from "$lib/services/utils";
+	import { refreshMap } from "$lib/services/utils";
 	import { onMount } from "svelte";
 	import POIDetailCard from "./POIDetailCard.svelte";
 	import Chart from "svelte-frappe-charts";
-	import type { DataSet } from "$lib/types/types";
 	import {
 		computeByCategory,
 		computeHeatmap,
 		computeRollingMonthlyTrend
 	} from "$lib/services/chart-utils";
 	import { SvelteDate } from "svelte/reactivity";
+	import type { PageProps } from "./$types";
+
+	let { data }: PageProps = $props();
+
+	let mounted = $state(false);
 
 	let map: LeafletMap;
-	let totalByCategory: DataSet;
-	let countByDayCreatedHeatmapData: Record<string, number>;
-	let trendByMonth: DataSet;
+
+	$effect(() => {
+		currentCategories.categories = data.categories;
+		currentPOIs.pois = data.pois;
+	});
+
+	let totalByCategory = $derived(computeByCategory(currentCategories.categories, currentPOIs.pois));
+	let countByDayCreatedHeatmapData = $derived(computeHeatmap(currentPOIs.pois));
+	let trendByMonth = $derived(computeRollingMonthlyTrend(currentPOIs.pois));
 
 	onMount(async () => {
-		await refreshData();
 		await refreshMap(map, currentCategories.categories, currentPOIs.pois);
 
-		totalByCategory = computeByCategory(currentCategories.categories, currentPOIs.pois);
-		countByDayCreatedHeatmapData = computeHeatmap(currentPOIs.pois);
-		trendByMonth = computeRollingMonthlyTrend(currentPOIs.pois);
+		mounted = true;
 	});
 </script>
 
@@ -50,28 +57,46 @@
 			<div class="row flex gap-2">
 				<div class="col card p-2">
 					<small class="text-muted">Points of Interest per Category</small>
-					<Chart data={totalByCategory} type="pie" height={300} maxSlices={5} />
+					{#if mounted}
+						<Chart data={totalByCategory} type="pie" height={300} maxSlices={5} />
+					{:else}
+						<div style="height: 300px;" class="flex items-center justify-center">
+							<p>Loading Chart...</p>
+						</div>
+					{/if}
 				</div>
 				<div class="col card flex flex-col p-2">
 					<small class="text-muted">Rolling Monthly Trend of Points of Interest Created</small>
-					<Chart data={trendByMonth} type="line" height={300} />
+					{#if mounted}
+						<Chart data={trendByMonth} type="line" height={300} />
+					{:else}
+						<div style="height: 300px;" class="flex items-center justify-center">
+							<p>Loading Chart...</p>
+						</div>
+					{/if}
 				</div>
 			</div>
 			<div class="row">
 				<div class="col card flex flex-col p-2">
 					<small class="text-muted">Point of Interest Creation Heatmap</small>
-					<div class="self-center justify-self-center pt-5">
-						<Chart
-							data={{
-								dataPoints: countByDayCreatedHeatmapData,
-								start: new SvelteDate(
-									new SvelteDate().setFullYear(new SvelteDate().getFullYear() - 1)
-								)
-							}}
-							type="heatmap"
-							height={300}
-						/>
-					</div>
+					{#if mounted}
+						<div class="self-center justify-self-center pt-5">
+							<Chart
+								data={{
+									dataPoints: countByDayCreatedHeatmapData,
+									start: new SvelteDate(
+										new SvelteDate().setFullYear(new SvelteDate().getFullYear() - 1)
+									)
+								}}
+								type="heatmap"
+								height={300}
+							/>
+						</div>
+					{:else}
+						<div style="height: 300px;" class="flex items-center justify-center">
+							<p>Loading Chart...</p>
+						</div>
+					{/if}
 				</div>
 			</div>
 		</div>

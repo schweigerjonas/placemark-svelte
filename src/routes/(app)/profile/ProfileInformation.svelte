@@ -1,48 +1,37 @@
 <script lang="ts">
+	import { enhance } from "$app/forms";
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
-	import { currentUser, loggedInUser } from "$lib/runes.svelte";
-	import { service } from "$lib/services/service";
+	import { loggedInUser } from "$lib/runes.svelte";
 	import { showToast } from "$lib/services/utils";
-	import { ToastType, type UserInfo } from "$lib/types/types";
+	import { ToastType } from "$lib/types/types";
+	import type { ActionData, PageServerData } from "./$types";
 
-	let firstName = $state(currentUser.firstName);
-	let lastName = $state(currentUser.lastName);
-	let email = $state(currentUser.email);
-	let notification = $state("");
+	let { data, form }: { data: PageServerData; form: ActionData } = $props();
 
-	async function updateProfileInformation() {
-		const updateDetails = {
-			firstName: firstName,
-			lastName: lastName,
-			email: email
-		};
-
-		const updated = await service.updateUser(loggedInUser._id, updateDetails as UserInfo);
-
-		if (updated) {
-			showToast("Profile information updated.", ToastType.Success, true);
-		} else {
-			notification = "Something went wrong.";
+	$effect(() => {
+		if (form?.updateProfileInformation?.success) {
+			showToast(form?.updateProfileInformation.message, ToastType.Success, true);
 		}
-	}
+	});
 </script>
 
 <div>
 	<h5>Personal Information</h5>
 	<hr />
-	{#if notification}
-		<ErrorNotification {notification} />
+	{#if form?.updateProfileInformation?.notification}
+		<ErrorNotification notification={form?.updateProfileInformation.notification} />
 	{/if}
-	<form onsubmit={updateProfileInformation}>
+	<form method="POST" action="?/updateProfileInformation" use:enhance>
+		<input type="hidden" name="id" value={loggedInUser._id} />
 		<div class="align-center mb-3 flex w-2/3 gap-2">
 			<div class="grow">
 				<label class="form-label font-bold" for="first-name">First Name</label>
 				<input
-					bind:value={firstName}
+					value={data.user?.firstName}
 					type="text"
 					class="form-control"
 					id="first-name"
-					name="first-name"
+					name="firstName"
 					placeholder="First Name"
 					required
 				/>
@@ -50,11 +39,11 @@
 			<div class="grow">
 				<label class="form-label font-bold" for="last-name">Last Name</label>
 				<input
-					bind:value={lastName}
+					value={data.user?.lastName}
 					type="text"
 					class="form-control"
 					id="last-name"
-					name="last-name"
+					name="lastName"
 					placeholder="Last Name"
 					required
 				/>
@@ -63,7 +52,7 @@
 		<div class="mb-3 w-2/3">
 			<label class="form-label font-bold" for="email">Email</label>
 			<input
-				bind:value={email}
+				value={data.user?.email}
 				type="text"
 				class="form-control"
 				id="email"

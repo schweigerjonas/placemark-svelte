@@ -15,23 +15,31 @@ import type {
 	ToastType
 } from "$lib/types/types";
 import { service } from "./service";
-import { restoreSession } from "./session-utils";
+
+export function clearState() {
+	loggedInUser.name = "";
+	loggedInUser.email = "";
+	loggedInUser.role = "";
+	loggedInUser.token = "";
+	loggedInUser._id = "";
+
+	currentUser.firstName = "";
+	currentUser.lastName = "";
+	currentUser.email = "";
+	currentUser.role = "";
+
+	currentCategories.categories = [];
+	currentPOIs.pois = [];
+
+	currentUserData.categories = [];
+	currentUserData.pois = [];
+	currentUserData.categoriesWithPOIs = [];
+}
 
 export function showToast(message: string, type: ToastType, visible: boolean) {
 	toastData.message = message;
 	toastData.type = type;
 	toastData.visible = visible;
-}
-
-export async function refreshCurrentUser() {
-	const user = await service.getUser(loggedInUser._id);
-
-	if (user) {
-		currentUser.firstName = user.firstName;
-		currentUser.lastName = user.lastName;
-		currentUser.email = user.email;
-		currentUser.role = user.role;
-	}
 }
 
 export async function refreshData() {
@@ -61,8 +69,6 @@ export async function refreshCurrentUserData() {
 
 // Setup Maps with Layers
 export async function refreshMap(map: LeafletMap, categories: Category[], pois: PointOfInterest[]) {
-	if (!loggedInUser.token) await restoreSession();
-
 	// remove any existing overlays or controls
 	map.clearLayers();
 
@@ -71,11 +77,6 @@ export async function refreshMap(map: LeafletMap, categories: Category[], pois: 
 	layers.forEach((layer) => {
 		map.populateLayer(layer);
 	});
-
-	if (pois.length > 0) {
-		const lastPOI = pois[pois.length - 1];
-		if (lastPOI) map.moveTo(+lastPOI.location.lat, +lastPOI.location.lng);
-	}
 }
 
 function prepareMarkerLayers(pois: PointOfInterest[], categories: Category[]): MarkerLayer[] {

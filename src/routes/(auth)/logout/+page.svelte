@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { browser } from "$app/environment";
 	import { goto } from "$app/navigation";
-	import { clearSession } from "$lib/services/session-utils";
+	import { clearState } from "$lib/services/utils";
+	import { onMount } from "svelte";
 
-	clearSession();
+	onMount(() => {
+		clearState();
+	});
 
-	goto("/");
+	if (browser) goto("/");
 </script>
