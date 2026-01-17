@@ -88,12 +88,6 @@ export async function refreshMap(map: LeafletMap, categories: Category[], pois: 
 	layers.forEach((layer) => {
 		map.populateLayer(layer);
 	});
-
-	// leads to errors when refreshMap is run inside $effect rune because map can be undefined there
-	// if (pois.length > 0) {
-	// 	const lastPOI = pois[pois.length - 1];
-	// 	if (lastPOI) map.moveTo(+lastPOI.location.lat, +lastPOI.location.lng);
-	// }
 }
 
 function prepareMarkerLayers(pois: PointOfInterest[], categories: Category[]): MarkerLayer[] {
