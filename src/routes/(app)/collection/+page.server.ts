@@ -165,6 +165,38 @@ export const actions: Actions = {
 		}
 	},
 
+	deletePOI: async ({ request, cookies }) => {
+		const cookieStr = cookies.get("placemark-user") as string;
+
+		if (cookieStr) {
+			const session = JSON.parse(cookieStr) as Session;
+
+			if (session) {
+				const form = await request.formData();
+				const id = form.get("poiId") as string;
+				const name = form.get("name") as string;
+
+				if (!id || !name) {
+					return fail(400, {
+						deletePOI: { success: false, message: "Something went wrong." }
+					});
+				}
+
+				const success = await service.deletePOIById(id, session.token);
+
+				if (success) {
+					return {
+						deletePOI: { success: true, message: `Point of Interest "${name}" deleted.` }
+					};
+				} else {
+					return fail(500, {
+						deletePOI: { success: false, message: "Failed to delete point of interest." }
+					});
+				}
+			}
+		}
+	},
+
 	uploadImage: async ({ request, cookies }) => {
 		const cookieStr = cookies.get("placemark-user") as string;
 

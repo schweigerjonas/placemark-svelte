@@ -8,7 +8,6 @@ import type {
 	User,
 	UserInfo
 } from "$lib/types/types";
-import { refreshCurrentUserData, refreshData } from "./utils";
 
 export const apiClient = axios.create({
 	baseURL: "http://localhost:3000/api"
@@ -327,11 +326,13 @@ export const service = {
 		}
 	},
 
-	async deletePOIById(id: string): Promise<boolean> {
+	async deletePOIById(id: string, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.delete(`/pois/${id}`);
-			await refreshCurrentUserData();
-			await refreshData();
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.delete(`/pois/${id}`, config);
 
 			return res.status === 204;
 		} catch (err) {
