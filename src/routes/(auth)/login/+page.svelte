@@ -24,10 +24,19 @@
 
 			<a
 				href="/login/github"
-				class="btn btn-outline-dark flex w-100 items-center justify-center gap-2 p-2"
+				class="btn btn-outline-dark flex w-100 items-center justify-center gap-3 p-2"
 			>
 				<i class="bi bi-github"></i>
 				<span>Sign in with GitHub</span>
+			</a>
+
+			<a
+				href="/login/google"
+				data-sveltekit-reload
+				class="btn btn-outline-danger mt-2 flex w-100 items-center justify-center gap-3 p-2"
+			>
+				<i class="bi bi-google"></i>
+				<span>Sign in with Google</span>
 			</a>
 
 			<div class="mt-3 text-center">
