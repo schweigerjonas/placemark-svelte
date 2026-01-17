@@ -1,47 +1,37 @@
 <script lang="ts">
-	import { loggedInUser } from "$lib/runes.svelte";
-	import { service } from "$lib/services/service";
+	import { enhance } from "$app/forms";
 	import { showToast } from "$lib/services/utils";
-	import { ToastType, type CategoryInfo } from "$lib/types/types";
+	import { ToastType } from "$lib/types/types";
+	import type { ActionData } from "./$types";
+
+	let { form }: { form: ActionData } = $props();
 
 	let formVisible = $state(false);
-	let title = $state("");
+
+	$effect(() => {
+		if (form?.createCategory.success) {
+			showToast(form?.createCategory.message, ToastType.Success, true);
+			formVisible = false;
+		} else if (form?.createCategory.message) {
+			showToast(form?.createCategory.message, ToastType.Danger, true);
+		}
+	});
 
 	async function toggleForm() {
 		formVisible = !formVisible;
-	}
-
-	async function create() {
-		const category: CategoryInfo = {
-			title: title,
-			img: {
-				url: "",
-				publicID: ""
-			}
-		};
-		const success = await service.createCategory(loggedInUser._id, category);
-
-		if (success) {
-			showToast(`Category "${category.title}" created.`, ToastType.Success, true);
-			title = "";
-			formVisible = false;
-		} else {
-			showToast("Error: Could not create category.", ToastType.Danger, true);
-		}
 	}
 </script>
 
 <h4 class="font-bold">Categories</h4>
 <div class="flex items-center justify-end">
 	{#if formVisible}
-		<form onsubmit={create} class="flex items-center gap-1">
+		<form method="POST" action="?/createCategory" class="flex items-center gap-1" use:enhance>
 			<div class="form-floating">
 				<input
-					bind:value={title}
 					type="text"
 					class="form-control"
 					id="category-title"
-					name="category-title"
+					name="categoryTitle"
 					placeholder="Title"
 					required
 				/>

@@ -8,7 +8,7 @@ import type {
 	User,
 	UserInfo
 } from "$lib/types/types";
-import { refreshCurrentUser, refreshCurrentUserData, refreshData } from "./utils";
+import { refreshCurrentUserData, refreshData } from "./utils";
 
 export const apiClient = axios.create({
 	baseURL: "http://localhost:3000/api"
@@ -102,8 +102,6 @@ export const service = {
 			const res = await apiClient.put(`/users/${id}`, updateDetails, config);
 
 			if (res.status === 201) {
-				refreshCurrentUser();
-
 				return true;
 			}
 
@@ -151,11 +149,13 @@ export const service = {
 		}
 	},
 
-	async createCategory(id: string, category: CategoryInfo): Promise<boolean> {
+	async createCategory(id: string, category: CategoryInfo, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.post(`/users/${id}/categories`, category);
-			await refreshCurrentUserData();
-			await refreshData();
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.post(`/users/${id}/categories`, category, config);
 
 			return res.status === 201;
 		} catch (err) {
@@ -181,9 +181,13 @@ export const service = {
 		}
 	},
 
-	async getUserCategories(id: string): Promise<Category[]> {
+	async getUserCategories(id: string, token: string): Promise<Category[]> {
 		try {
-			const res = await apiClient.get(`/users/${id}/categories`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.get(`/users/${id}/categories`, config);
 
 			if (res.status === 200) {
 				return res.data;
@@ -261,9 +265,13 @@ export const service = {
 		}
 	},
 
-	async getCategoryPOIs(id: string): Promise<PointOfInterest[]> {
+	async getCategoryPOIs(id: string, token: string): Promise<PointOfInterest[]> {
 		try {
-			const res = await apiClient.get(`/categories/${id}/pois`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.get(`/categories/${id}/pois`, config);
 
 			if (res.status === 200) {
 				return res.data;

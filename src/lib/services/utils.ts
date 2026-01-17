@@ -42,17 +42,6 @@ export function showToast(message: string, type: ToastType, visible: boolean) {
 	toastData.visible = visible;
 }
 
-export async function refreshCurrentUser() {
-	const user = await service.getUserById(loggedInUser._id, loggedInUser.token);
-
-	if (user) {
-		currentUser.firstName = user.firstName;
-		currentUser.lastName = user.lastName;
-		currentUser.email = user.email;
-		currentUser.role = user.role;
-	}
-}
-
 export async function refreshData() {
 	[currentPOIs.pois, currentCategories.categories] = await Promise.all([
 		service.getAllPOIs(),
