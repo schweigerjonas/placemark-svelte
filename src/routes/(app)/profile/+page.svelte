@@ -27,6 +27,6 @@
 		</div>
 		<p class="pt-1.5 text-sm text-gray-600">You cannot change your own role.</p>
 	</div>
-	<ChangePasswordForm />
-	<DeleteAccount />
+	<ChangePasswordForm {form} />
+	<DeleteAccount {form} />
 </div>

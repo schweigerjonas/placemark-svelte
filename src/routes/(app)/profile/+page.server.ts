@@ -64,17 +64,51 @@ export const actions: Actions = {
 			}
 		}
 	},
-	// changePassword: async ({ request, cookies }) => {
-	// 	const cookieStr = cookies.get("placemark-user") as string;
-	//
-	// 	if (cookieStr) {
-	// 		const session = JSON.parse(cookieStr) as Session;
-	//
-	// 		if (session) {
-	// 			const form = await request.formData();
-	// 		}
-	// 	}
-	// }
+
+	changePassword: async ({ request, cookies }) => {
+		const cookieStr = cookies.get("placemark-user") as string;
+
+		if (cookieStr) {
+			const session = JSON.parse(cookieStr) as Session;
+
+			if (session) {
+				const form = await request.formData();
+				const id = form.get("id") as string;
+				const updateDetails = {
+					password: form.get("password") as string,
+					currentPassword: form.get("currentPassword") as string
+				} as UserInfo;
+				const confirmPassword = form.get("confirmPassword") as string;
+
+				if (updateDetails.password !== confirmPassword) {
+					return fail(400, {
+						changePassword: { success: false, message: "", notification: "Passwords don't match." }
+					});
+				}
+
+				const success = await service.updateUserPassword(id, updateDetails, session.token);
+
+				if (success) {
+					return {
+						changePassword: {
+							success: true,
+							message: "Password updated.",
+							notification: ""
+						}
+					};
+				} else {
+					return fail(500, {
+						changePassword: {
+							success: false,
+							message: "",
+							notification: "Current password wrong. Couldn't change password."
+						}
+					});
+				}
+			}
+		}
+	},
+
 	deleteAccount: async ({ request, cookies }) => {
 		const cookieStr = cookies.get("placemark-user") as string;
 
