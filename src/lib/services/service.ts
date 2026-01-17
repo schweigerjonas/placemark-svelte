@@ -52,6 +52,62 @@ export const service = {
 		}
 	},
 
+	async loginWithGithub(githubId: number, username: string): Promise<Session | null> {
+		try {
+			const res = await apiClient.post("/users/authenticate/github", { githubId, username });
+
+			if (res.data.success) {
+				apiClient.defaults.headers.common.Authorization = `Bearer ${res.data.token}`;
+
+				const session: Session = {
+					name: res.data.name,
+					email: `${username}@github.com`,
+					role: res.data.role,
+					token: res.data.token,
+					_id: res.data._id
+				};
+
+				return session;
+			}
+
+			return null;
+		} catch (err) {
+			console.error(err);
+
+			return null;
+		}
+	},
+
+	async loginWithGoogle(
+		googleId: string,
+		username: string,
+		email: string
+	): Promise<Session | null> {
+		try {
+			const res = await apiClient.post("/users/authenticate/google", { googleId, username, email });
+
+			if (res.data.success) {
+				apiClient.defaults.headers.common.Authorization = `Bearer ${res.data.token}`;
+
+				const session: Session = {
+					name: res.data.name,
+					email: email,
+					role: res.data.role,
+					token: res.data.token,
+					_id: res.data._id
+				};
+
+				return session;
+			}
+
+			return null;
+		} catch (err) {
+			console.error(err);
+
+			return null;
+		}
+	},
+
 	async getAllUsers(token: string): Promise<User[]> {
 		try {
 			const config = {
