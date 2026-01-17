@@ -52,7 +52,7 @@
 				{#if currentUserData.categoriesWithPOIs.length !== 0}
 					{#each currentUserData.categoriesWithPOIs as category (category._id)}
 						<div class="flex-none">
-							<CategoryItem {category} pois={category.pois} />
+							<CategoryItem {form} {category} pois={category.pois} />
 						</div>
 					{/each}
 				{:else}

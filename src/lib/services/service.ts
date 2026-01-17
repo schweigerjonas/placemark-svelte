@@ -221,11 +221,13 @@ export const service = {
 		}
 	},
 
-	async deleteCategoryById(id: string): Promise<boolean> {
+	async deleteCategoryById(id: string, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.delete(`/categories/${id}`);
-			await refreshCurrentUserData();
-			await refreshData();
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.delete(`/categories/${id}`, config);
 
 			return res.status === 204;
 		} catch (err) {

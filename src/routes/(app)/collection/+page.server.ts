@@ -67,8 +67,38 @@ export const actions: Actions = {
 					return fail(500, {
 						createCategory: {
 							success: false,
-							message: "Could not create category."
+							message: "Failed to create category."
 						}
+					});
+				}
+			}
+		}
+	},
+
+	deleteCategory: async ({ request, cookies }) => {
+		const cookieStr = cookies.get("placemark-user") as string;
+
+		if (cookieStr) {
+			const session = JSON.parse(cookieStr) as Session;
+
+			if (session) {
+				const form = await request.formData();
+				const id = form.get("categoryId") as string;
+				const title = form.get("title") as string;
+
+				if (!id || !title) {
+					return fail(400, {
+						deleteCategory: { success: false, message: "Something went wrong." }
+					});
+				}
+
+				const success = await service.deleteCategoryById(id, session.token);
+
+				if (success) {
+					return { deleteCategory: { success: true, message: `Category "${title}" deleted.` } };
+				} else {
+					return fail(500, {
+						deleteCategory: { success: false, message: "Failed to delete category." }
 					});
 				}
 			}
@@ -125,7 +155,7 @@ export const actions: Actions = {
 					return fail(500, {
 						createPOI: {
 							success: false,
-							message: "Could not create point of interest.",
+							message: "Failed to create point of interest.",
 							lat: "",
 							lng: ""
 						}
@@ -156,7 +186,7 @@ export const actions: Actions = {
 					return fail(400, {
 						uploadImage: {
 							success: false,
-							message: "Could not find point of interest to upload image to."
+							message: "Failed to find point of interest to upload image to."
 						}
 					});
 				}
@@ -171,7 +201,7 @@ export const actions: Actions = {
 					return fail(500, {
 						uploadImage: {
 							success: false,
-							message: "Could not upload image."
+							message: "Failed to upload image."
 						}
 					});
 				}
@@ -224,7 +254,7 @@ export const actions: Actions = {
 					return fail(500, {
 						deleteImage: {
 							success: false,
-							message: "Could not delete image."
+							message: "Failed to delete image."
 						}
 					});
 				}
