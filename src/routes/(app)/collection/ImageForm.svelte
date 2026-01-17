@@ -12,15 +12,8 @@
 
 	let fileInput: HTMLInputElement;
 
-	async function deleteImage(imageId: string) {
-		const success = await service.deleteImageFromPOI(addImageForm.poi, imageId, loggedInUser.token);
-
-		if (success) {
-			showToast("Image deleted.", ToastType.Success, true);
-			await updateImageFormPOI(addImageForm.poi);
-		} else {
-			showToast("Failed to delete image.", ToastType.Danger, true);
-		}
+	async function onDelete() {
+		await updateImageFormPOI(addImageForm.poi);
 	}
 
 	async function updateImageFormPOI(poi: PointOfInterest) {
@@ -97,6 +90,6 @@
 		</form>
 	</div>
 	<div>
-		<ImageCarousel {images} canDelete={true} onDelete={(imageId: string) => deleteImage(imageId)} />
+		<ImageCarousel {images} canDelete={true} onDelete={() => onDelete()} />
 	</div>
 </div>

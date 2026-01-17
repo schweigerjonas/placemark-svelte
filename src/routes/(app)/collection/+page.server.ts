@@ -168,13 +168,67 @@ export const actions: Actions = {
 						uploadImage: { success: true, message: "Image uploaded." }
 					};
 				} else {
-					return fail(500, { uploadImage: { success: false, message: "Could not upload image." } });
+					return fail(500, {
+						uploadImage: {
+							success: false,
+							message: "Could not upload image."
+						}
+					});
+				}
+			}
+		}
+	},
+
+	deleteImage: async ({ request, cookies }) => {
+		const cookieStr = cookies.get("placemark-user") as string;
+
+		if (cookieStr) {
+			const session = JSON.parse(cookieStr) as Session;
+
+			if (session) {
+				const form = await request.formData();
+
+				const poiId = form.get("poiId") as string;
+				const imageId = form.get("imageId") as string;
+
+				if (!poiId || !imageId) {
+					return fail(400, {
+						deleteImage: {
+							success: false,
+							message: "Something went wrong."
+						}
+					});
+				}
+
+				const poi = await service.getPOIById(poiId, session.token);
+
+				if (!poi) {
+					return fail(400, {
+						deleteImage: {
+							success: false,
+							message: "Something went wrong. Could not find point of interest."
+						}
+					});
+				}
+
+				const success = await service.deleteImageFromPOI(poi, imageId, session.token);
+
+				if (success) {
+					return {
+						deleteImage: {
+							sucess: true,
+							message: "Image deleted."
+						}
+					};
+				} else {
+					return fail(500, {
+						deleteImage: {
+							success: false,
+							message: "Could not delete image."
+						}
+					});
 				}
 			}
 		}
 	}
-
-	// deleteImage: async ({request, cookies}) => {
-	//
-	// },
 };

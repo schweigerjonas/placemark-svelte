@@ -414,9 +414,6 @@ export const service = {
 				return false;
 			}
 
-			await refreshCurrentUserData();
-			await refreshData();
-
 			return true;
 		} catch (err) {
 			console.error(err);

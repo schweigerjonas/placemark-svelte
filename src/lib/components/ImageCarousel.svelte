@@ -1,5 +1,9 @@
 <script lang="ts">
-	import type { Image } from "$lib/types/types";
+	import { enhance } from "$app/forms";
+	import { addImageForm } from "$lib/runes.svelte";
+	import { showToast } from "$lib/services/utils";
+	import { ToastType, type Image } from "$lib/types/types";
+	import { type ActionData } from "../../routes/(app)/collection/$types";
 
 	let { images = [] as Image[], canDelete = false, onDelete = () => {}, maxWidth = 600 } = $props();
 
@@ -31,17 +35,40 @@
 					/>
 					{#if canDelete}
 						<!-- z-index ensures button is above control chevron buttons of carousel -->
-						<button
-							onclick={() => onDelete(image.publicID)}
-							type="button"
-							class="absolute end-2 top-2 z-10"
+						<form
+							method="POST"
+							action="?/deleteImage"
+							use:enhance={() => {
+								return async ({ result }) => {
+									if (result.type === "success") {
+										const data = result.data as ActionData;
+
+										if (data && data?.deleteImage) {
+											showToast(data.deleteImage.message, ToastType.Success, true);
+										}
+
+										onDelete();
+									} else if (result.type === "failure") {
+										const data = result.data as ActionData;
+
+										if (data && data?.deleteImage) {
+											const message = data.deleteImage.message || "Deletion failed.";
+											showToast(message, ToastType.Danger, true);
+										}
+									}
+								};
+							}}
 						>
-							<span
-								class="material-symbols-outlined rounded-lg bg-slate-50 p-2 text-red-500 hover:bg-red-50"
-							>
-								delete
-							</span>
-						</button>
+							<input type="hidden" name="poiId" value={addImageForm.poi._id} />
+							<input type="hidden" name="imageId" value={image.publicID} />
+							<button type="submit" class="absolute end-2 top-2 z-10">
+								<span
+									class="material-symbols-outlined rounded-lg bg-slate-50 p-2 text-red-500 hover:bg-red-50"
+								>
+									delete
+								</span>
+							</button>
+						</form>
 					{/if}
 				</div>
 			{/each}
