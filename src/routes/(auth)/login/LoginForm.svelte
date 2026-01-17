@@ -2,12 +2,13 @@
 	import { enhance } from "$app/forms";
 	import ErrorNotification from "$lib/components/ErrorNotification.svelte";
 	import UserCredentials from "$lib/components/UserCredentials.svelte";
+	import type { ActionData } from "./$types";
 
-	let notification = "";
+	let { form }: { form: ActionData } = $props();
 </script>
 
-{#if notification}
-	<ErrorNotification {notification} />
+{#if form?.message}
+	<ErrorNotification notification={form?.message} />
 {/if}
 <div>
 	<form method="POST" action="?/login" use:enhance>

@@ -1,6 +1,6 @@
 import { dev } from "$app/environment";
 import { service } from "$lib/services/service";
-import { redirect, type Actions } from "@sveltejs/kit";
+import { fail, redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
 	login: async ({ request, cookies }) => {
@@ -9,7 +9,7 @@ export const actions: Actions = {
 		const password = form.get("password") as string;
 
 		if (email === "" || password === "") {
-			throw redirect(307, "/login");
+			return fail(400, { message: "Email or password missing." });
 		} else {
 			const session = await service.login(email, password);
 
@@ -24,7 +24,7 @@ export const actions: Actions = {
 				});
 				throw redirect(303, "/");
 			} else {
-				throw redirect(307, "/login");
+				return fail(500, { message: "Email or password wrong." });
 			}
 		}
 	}

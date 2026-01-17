@@ -1,5 +1,8 @@
 <script lang="ts">
+	import type { PageProps } from "./$types";
 	import LoginForm from "./LoginForm.svelte";
+
+	let { form }: PageProps = $props();
 </script>
 
 <div class="flex h-full items-center justify-center">
@@ -11,7 +14,7 @@
 					Enter your email and password to access your account.
 				</p>
 			</div>
-			<LoginForm />
+			<LoginForm {form} />
 			<div class="mt-3 text-center">
 				<small class="text-muted">
 					Don't have an account?
