@@ -1,35 +1,19 @@
 <script lang="ts">
 	import ImageCarousel from "$lib/components/ImageCarousel.svelte";
-	import { addImageForm } from "$lib/runes.svelte";
+	import { addImageForm, loggedInUser } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
 	import { showToast } from "$lib/services/utils";
-	import { ToastType, type Image, type PointOfInterest } from "$lib/types/types";
+	import { ToastType, type PointOfInterest } from "$lib/types/types";
 	import { onDestroy } from "svelte";
+	import type { ActionData } from "./$types";
+	import { enhance } from "$app/forms";
+
+	let images = $derived(addImageForm.poi.img);
 
 	let fileInput: HTMLInputElement;
 
-	let images: Image[] = $derived(addImageForm.poi.img);
-
-	async function upload(e: Event) {
-		e.preventDefault();
-
-		if (fileInput && fileInput.files && fileInput.files[0]) {
-			const file = fileInput.files[0];
-
-			const success = await service.addImageToPOI(addImageForm.poi, file);
-
-			if (success) {
-				showToast("Image uploaded.", ToastType.Success, true);
-				await updateImageFormPOI(addImageForm.poi);
-				fileInput.value = "";
-			}
-		} else {
-			showToast("Failed to upload image.", ToastType.Danger, true);
-		}
-	}
-
 	async function deleteImage(imageId: string) {
-		const success = await service.deleteImageFromPOI(addImageForm.poi, imageId);
+		const success = await service.deleteImageFromPOI(addImageForm.poi, imageId, loggedInUser.token);
 
 		if (success) {
 			showToast("Image deleted.", ToastType.Success, true);
@@ -39,23 +23,20 @@
 		}
 	}
 
-	async function close() {
-		addImageForm.poi = {} as PointOfInterest;
-		addImageForm.visible = false;
-	}
-
 	async function updateImageFormPOI(poi: PointOfInterest) {
-		const newPOI = await service.getPOIById(poi._id);
+		const newPOI = await service.getPOIById(poi._id, loggedInUser.token);
 
 		if (newPOI) {
 			addImageForm.poi = newPOI;
 		}
 	}
 
-	onDestroy(() => {
+	async function close() {
 		addImageForm.poi = {} as PointOfInterest;
 		addImageForm.visible = false;
-	});
+	}
+
+	onDestroy(() => close());
 </script>
 
 <div class="card flex flex-col gap-3 p-3">
@@ -65,7 +46,38 @@
 			<button onclick={close} type="button" class="btn-close" aria-label="Close add image form"
 			></button>
 		</div>
-		<form onsubmit={upload} class="flex flex-col gap-3">
+		<form
+			method="POST"
+			action="?/uploadImage"
+			enctype="multipart/form-data"
+			class="flex flex-col gap-3"
+			use:enhance={() => {
+				// use callback so toast only appears once
+				return async ({ result }) => {
+					if (result.type === "success") {
+						const data = result.data as ActionData;
+
+						if (data && data.uploadImage) {
+							showToast(data.uploadImage.message, ToastType.Success, true);
+
+							if (fileInput) {
+								fileInput.value = "";
+							}
+
+							await updateImageFormPOI(addImageForm.poi);
+						}
+					} else if (result.type === "failure") {
+						const data = result.data as ActionData;
+
+						if (data && data.uploadImage) {
+							const message = data.uploadImage.message || "Upload failed.";
+							showToast(message, ToastType.Danger, true);
+						}
+					}
+				};
+			}}
+		>
+			<input type="hidden" name="poiId" value={addImageForm.poi._id} />
 			<div>
 				<label for="poi-image" class="form-label font-bold">Select Image</label>
 				<input
@@ -74,6 +86,7 @@
 					accept="image/*"
 					class="form-control"
 					id="poi-image"
+					name="poiImage"
 					required
 				/>
 			</div>

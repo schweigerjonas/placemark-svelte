@@ -306,13 +306,15 @@ export const service = {
 		}
 	},
 
-	async updatePOI(id: string, updateDetails: PointOfInterestInfo): Promise<boolean> {
+	async updatePOI(id: string, updateDetails: PointOfInterestInfo, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.put(`/pois/${id}`, updateDetails);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.put(`/pois/${id}`, updateDetails, config);
 
 			if (res.status === 201) {
-				await refreshCurrentUserData();
-				await refreshData();
 				return true;
 			}
 			return false;
@@ -337,12 +339,16 @@ export const service = {
 		}
 	},
 
-	async addImageToPOI(poi: PointOfInterest, file: File): Promise<boolean> {
+	async addImageToPOI(poi: PointOfInterest, file: File, token: string): Promise<boolean> {
 		try {
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
 			const formData = new FormData();
 			formData.append("imageFile", file);
 
-			const res = await apiClient.post(`/images`, formData);
+			const res = await apiClient.post(`/images`, formData, config);
 
 			if (res.status !== 201) {
 				console.error("image upload failed");
@@ -362,15 +368,12 @@ export const service = {
 				img: images
 			};
 
-			const updateSuccess = await this.updatePOI(poi._id, payload);
+			const updateSuccess = await this.updatePOI(poi._id, payload, token);
 
 			if (!updateSuccess) {
 				console.error("poi update failed");
 				return false;
 			}
-
-			await refreshCurrentUserData();
-			await refreshData();
 
 			return true;
 		} catch (err) {
@@ -379,9 +382,13 @@ export const service = {
 			return false;
 		}
 	},
-	async deleteImageFromPOI(poi: PointOfInterest, imageId: string): Promise<boolean> {
+	async deleteImageFromPOI(poi: PointOfInterest, imageId: string, token: string): Promise<boolean> {
 		try {
-			const res = await apiClient.delete(`/images/${imageId}`);
+			const config = {
+				headers: { Authorization: `Bearer ${token}` }
+			};
+
+			const res = await apiClient.delete(`/images/${imageId}`, config);
 
 			if (res.status !== 204) {
 				console.error("image deletion failed");
@@ -400,7 +407,7 @@ export const service = {
 				img: images
 			};
 
-			const updateSuccess = await this.updatePOI(poi._id, payload);
+			const updateSuccess = await this.updatePOI(poi._id, payload, token);
 
 			if (!updateSuccess) {
 				console.error("poi update failed");

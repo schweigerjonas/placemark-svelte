@@ -74,6 +74,7 @@ export const actions: Actions = {
 			}
 		}
 	},
+
 	createPOI: async ({ request, cookies }) => {
 		const cookieStr = cookies.get("placemark-user") as string;
 
@@ -132,5 +133,48 @@ export const actions: Actions = {
 				}
 			}
 		}
+	},
+
+	uploadImage: async ({ request, cookies }) => {
+		const cookieStr = cookies.get("placemark-user") as string;
+
+		if (cookieStr) {
+			const session = JSON.parse(cookieStr) as Session;
+
+			if (session) {
+				const form = await request.formData();
+				const poiId = form.get("poiId") as string;
+				const file = form.get("poiImage") as File;
+
+				if (!file || file.size === 0) {
+					return fail(400, { uploadImage: { success: false, message: "No file selected." } });
+				}
+
+				const poi = await service.getPOIById(poiId, session.token);
+
+				if (!poi) {
+					return fail(400, {
+						uploadImage: {
+							success: false,
+							message: "Could not find point of interest to upload image to."
+						}
+					});
+				}
+
+				const success = await service.addImageToPOI(poi, file, session.token);
+
+				if (success) {
+					return {
+						uploadImage: { success: true, message: "Image uploaded." }
+					};
+				} else {
+					return fail(500, { uploadImage: { success: false, message: "Could not upload image." } });
+				}
+			}
+		}
 	}
+
+	// deleteImage: async ({request, cookies}) => {
+	//
+	// },
 };
