@@ -49,24 +49,6 @@ export async function refreshData() {
 	]);
 }
 
-export async function refreshCurrentUserData() {
-	currentUserData.categories = await service.getUserCategories(loggedInUser._id);
-
-	// get POIs of all user categories
-	const poiPromises = currentUserData.categories.map((category) =>
-		service.getCategoryPOIs(category._id)
-	);
-	const results = await Promise.all(poiPromises); // resolves all promises in parallel
-	currentUserData.pois = results.flat();
-
-	currentUserData.categoriesWithPOIs = currentUserData.categories.map((category, i) => {
-		return {
-			...category,
-			pois: results[i]
-		};
-	});
-}
-
 // Setup Maps with Layers
 export async function refreshMap(map: LeafletMap, categories: Category[], pois: PointOfInterest[]) {
 	// remove any existing overlays or controls

@@ -212,7 +212,7 @@ export const actions: Actions = {
 					return fail(400, { uploadImage: { success: false, message: "No file selected." } });
 				}
 
-				const poi = await service.getPOIById(poiId, session.token);
+				const poi = await service.getPOIById(poiId);
 
 				if (!poi) {
 					return fail(400, {
@@ -262,7 +262,7 @@ export const actions: Actions = {
 					});
 				}
 
-				const poi = await service.getPOIById(poiId, session.token);
+				const poi = await service.getPOIById(poiId);
 
 				if (!poi) {
 					return fail(400, {
