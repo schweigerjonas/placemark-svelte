@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ImageCarousel from "$lib/components/ImageCarousel.svelte";
-	import { addImageForm, loggedInUser } from "$lib/runes.svelte";
+	import { addImageForm } from "$lib/runes.svelte";
 	import { service } from "$lib/services/service";
 	import { showToast } from "$lib/services/utils";
 	import { ToastType, type PointOfInterest } from "$lib/types/types";
@@ -17,7 +17,7 @@
 	}
 
 	async function updateImageFormPOI(poi: PointOfInterest) {
-		const newPOI = await service.getPOIById(poi._id, loggedInUser.token);
+		const newPOI = await service.getPOIById(poi._id);
 
 		if (newPOI) {
 			addImageForm.poi = newPOI;

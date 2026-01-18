@@ -256,13 +256,9 @@ export const service = {
 		}
 	},
 
-	async getCategoryById(id: string, token: string): Promise<Category | null> {
+	async getCategoryById(id: string): Promise<Category | null> {
 		try {
-			const config = {
-				headers: { Authorization: `Bearer ${token}` }
-			};
-
-			const res = await apiClient.get(`/categories/${id}`, config);
+			const res = await apiClient.get(`/categories/${id}`);
 
 			if (res.status === 200) {
 				return res.data;
@@ -344,13 +340,10 @@ export const service = {
 		}
 	},
 
-	async getPOIById(id: string, token: string): Promise<PointOfInterest | null> {
+	async getPOIById(id: string): Promise<PointOfInterest | null> {
 		try {
-			const config = {
-				headers: { Authorization: `Bearer ${token}` }
-			};
+			const res = await apiClient.get(`/pois/${id}`);
 
-			const res = await apiClient.get(`/pois/${id}`, config);
 			if (res.status === 200) {
 				return res.data;
 			}
