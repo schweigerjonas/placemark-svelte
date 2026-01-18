@@ -33,6 +33,20 @@ Install dependencies:
 npm install
 ```
 
+Configure Environment Variables:
+
+Create a file named `.env` in the root directory and add your configuration variables. At a minimum, you'll need:
+
+```bash
+# GitHub OAuth
+GITHUB_CLIENT_ID=your_github_client_id_here
+GITHUB_CLIENT_SECRET=your_github_client_secret_here
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id_here
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+```
+
 ## Development
 
 To run in development mode (with hot module replacement):
