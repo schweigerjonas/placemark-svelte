@@ -10,8 +10,8 @@ import type {
 } from "$lib/types/types";
 
 export const apiClient = axios.create({
-	baseURL: "http://localhost:3000/api"
-	// baseURL: "https://placemark-core.onrender.com/api"
+	// baseURL: "http://localhost:3000/api"
+	baseURL: "https://placemark-core.onrender.com/api"
 });
 
 export const service = {
