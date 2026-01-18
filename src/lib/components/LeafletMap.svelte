@@ -1,5 +1,5 @@
 <script lang="ts">
-	import "leaflet/dist/leaflet.css";
+	// import "leaflet/dist/leaflet.css";
 	import type { Control, Map as LeafletMap } from "leaflet";
 	import { onMount } from "svelte";
 	import { ToastType, type MarkerLayer, type MarkerSpec } from "$lib/types/types";
