@@ -24,9 +24,9 @@
 		currentPOIs.pois = data.pois;
 	});
 
-	let totalByCategory = $derived(computeByCategory(currentCategories.categories, currentPOIs.pois));
-	let countByDayCreatedHeatmapData = $derived(computeHeatmap(currentPOIs.pois));
-	let trendByMonth = $derived(computeRollingMonthlyTrend(currentPOIs.pois));
+	let totalByCategory = $derived(computeByCategory(data.categories, data.pois));
+	let countByDayCreatedHeatmapData = $derived(computeHeatmap(data.pois));
+	let trendByMonth = $derived(computeRollingMonthlyTrend(data.pois));
 
 	onMount(async () => {
 		await refreshMap(map, currentCategories.categories, currentPOIs.pois);
