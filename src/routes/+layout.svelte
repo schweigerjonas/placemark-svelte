@@ -2,14 +2,26 @@
 	import "./layout.css";
 	import favicon from "$lib/assets/favicon.svg";
 	import "bootstrap-icons/font/bootstrap-icons.css";
-	import { onMount } from "svelte";
+	import { type Snippet } from "svelte";
 	import SuccessToast from "$lib/components/SuccessToast.svelte";
-	import { restoreSession } from "$lib/services/session-utils";
+	import { loggedInUser } from "$lib/runes.svelte";
+	import type { PageProps } from "./(app)/$types";
+	import { clearState } from "$lib/services/utils";
 
-	let { children } = $props();
+	let { children, data }: PageProps & { children: Snippet } = $props();
 
-	onMount(async () => {
-		await restoreSession();
+	$effect(() => {
+		const session = data.session;
+
+		if (session) {
+			loggedInUser.name = session.name;
+			loggedInUser.email = session.email;
+			loggedInUser.role = session.role;
+			loggedInUser.token = session.token;
+			loggedInUser._id = session._id;
+		} else {
+			clearState();
+		}
 	});
 </script>
 

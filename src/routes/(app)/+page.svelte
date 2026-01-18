@@ -1,37 +1,37 @@
 <script lang="ts">
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
 	import { currentCategories, currentPOIs, selectedMarker } from "$lib/runes.svelte";
-	import { refreshMap, refreshData } from "$lib/services/utils";
+	import { refreshMap } from "$lib/services/utils";
 	import { onMount } from "svelte";
 	import POIDetailCard from "./POIDetailCard.svelte";
 	import Chart from "svelte-frappe-charts";
+	import {
+		computeByCategory,
+		computeHeatmap,
+		computeRollingMonthlyTrend
+	} from "$lib/services/chart-utils";
+	import { SvelteDate } from "svelte/reactivity";
+	import type { PageProps } from "./$types";
+
+	let { data }: PageProps = $props();
+
+	let mounted = $state(false);
 
 	let map: LeafletMap;
-	let categoryNames: string[] = ["category"];
-	let counts: number[] = [0];
 
-	const totalByCategory = {
-		labels: categoryNames,
-		datasets: [
-			{
-				values: counts
-			}
-		]
-	};
+	$effect(() => {
+		currentCategories.categories = data.categories;
+		currentPOIs.pois = data.pois;
+	});
+
+	let totalByCategory = $derived(computeByCategory(data.categories, data.pois));
+	let countByDayCreatedHeatmapData = $derived(computeHeatmap(data.pois));
+	let trendByMonth = $derived(computeRollingMonthlyTrend(data.pois));
 
 	onMount(async () => {
-		await refreshData();
 		await refreshMap(map, currentCategories.categories, currentPOIs.pois);
 
-		// get set of unique category titles
-		totalByCategory.labels = [
-			...new Set(currentCategories.categories.map((category) => category.title))
-		];
-		// get number of POIs per category
-		// for every category, get all POIs belonging to it and return the length
-		totalByCategory.datasets[0].values = currentCategories.categories.map(
-			(category) => currentPOIs.pois.filter((poi) => poi.categoryID === category._id).length
-		);
+		mounted = true;
 	});
 </script>
 
@@ -53,11 +53,53 @@
 	<div class="px-2">
 		<h2>Insights</h2>
 		<p>Visualizing our growing database of points of interest.</p>
-		<div class="w-1/2">
-			<div class="card p-2">
-				<small class="text-muted">Points of Interest per Category</small>
-				<Chart data={totalByCategory} type="pie" height={300} maxSlices={5} />
+		<div class="container flex flex-col gap-2">
+			<div class="row flex gap-2">
+				<div class="col card p-2">
+					<small class="text-muted">Points of Interest per Category</small>
+					{#if mounted}
+						<Chart data={totalByCategory} type="pie" height={300} maxSlices={5} />
+					{:else}
+						<div style="height: 300px;" class="flex items-center justify-center">
+							<p>Loading Chart...</p>
+						</div>
+					{/if}
+				</div>
+				<div class="col card flex flex-col p-2">
+					<small class="text-muted">Rolling Monthly Trend of Points of Interest Created</small>
+					{#if mounted}
+						<Chart data={trendByMonth} type="line" height={300} />
+					{:else}
+						<div style="height: 300px;" class="flex items-center justify-center">
+							<p>Loading Chart...</p>
+						</div>
+					{/if}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col card flex flex-col p-2">
+					<small class="text-muted">Point of Interest Creation Heatmap</small>
+					{#if mounted}
+						<div class="self-center justify-self-center pt-5">
+							<Chart
+								data={{
+									dataPoints: countByDayCreatedHeatmapData,
+									start: new SvelteDate(
+										new SvelteDate().setFullYear(new SvelteDate().getFullYear() - 1)
+									)
+								}}
+								type="heatmap"
+								height={300}
+							/>
+						</div>
+					{:else}
+						<div style="height: 300px;" class="flex items-center justify-center">
+							<p>Loading Chart...</p>
+						</div>
+					{/if}
+				</div>
 			</div>
 		</div>
+		<div class="w-1/2"></div>
 	</div>
 </div>

@@ -1,5 +1,8 @@
-<script>
+<script lang="ts">
+	import type { PageProps } from "./$types";
 	import SignupForm from "./SignupForm.svelte";
+
+	let { form }: PageProps = $props();
 </script>
 
 <div class="flex h-full items-center justify-center">
@@ -9,7 +12,7 @@
 				<h1 class="card-title text-center">Create an account</h1>
 				<p class="text-muted text-center text-xs">Welcome to Placemark!</p>
 			</div>
-			<SignupForm />
+			<SignupForm {form} />
 			<div class="mt-3 text-center">
 				<small class="text-muted">
 					Already have an account?

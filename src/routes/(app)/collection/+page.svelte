@@ -1,28 +1,43 @@
 <script lang="ts">
-	import CategoryItem from "$lib/components/CategoryItem.svelte";
 	import LeafletMap from "$lib/components/LeafletMap.svelte";
-	import { addImageForm, createPOIForm, currentUserData, loggedInUser } from "$lib/runes.svelte";
-	import { restoreSession } from "$lib/services/session-utils";
-	import { refreshCurrentUserData, refreshMap } from "$lib/services/utils";
-	import { onMount } from "svelte";
+	import { addImageForm, createPOIForm, currentUserData } from "$lib/runes.svelte";
+	import { refreshMap } from "$lib/services/utils";
 	import POIForm from "./POIForm.svelte";
 	import CategoryForm from "./CategoryForm.svelte";
 	import ImageForm from "./ImageForm.svelte";
+	import type { PageProps } from "./$types";
+	import CategoryItem from "./CategoryItem.svelte";
+
+	let { data, form }: PageProps = $props();
 
 	let map: LeafletMap;
 
 	let height = 60;
 
 	$effect(() => {
-		if (map && currentUserData.pois.length > 0) {
-			refreshMap(map, currentUserData.categories, currentUserData.pois);
+		if (data.categories && data.pois && data.categoriesWithPOIs) {
+			currentUserData.categories = data.categories;
+			currentUserData.pois = data.pois;
+			currentUserData.categoriesWithPOIs = data.categoriesWithPOIs;
 		}
 	});
 
-	onMount(async () => {
-		if (!loggedInUser.token) await restoreSession();
-		await refreshCurrentUserData();
+	$effect(() => {
+		if (map && currentUserData.pois.length > 0) {
+			syncMap();
+		}
 	});
+
+	async function syncMap() {
+		await map.ready();
+		refreshMap(map, currentUserData.categories, currentUserData.pois);
+	}
+
+	function handlePOICreated(lat: string, lng: string) {
+		if (map) {
+			map.moveTo(+lat, +lng, 11);
+		}
+	}
 </script>
 
 <div class="flex flex-col gap-3 px-2">
@@ -32,12 +47,12 @@
 			<LeafletMap {height} zoom={7} bind:this={map} />
 		</div>
 		<div class="flex w-1/3 flex-col gap-2">
-			<CategoryForm />
+			<CategoryForm {form} />
 			<div class="flex flex-col gap-2 overflow-y-auto">
 				{#if currentUserData.categoriesWithPOIs.length !== 0}
 					{#each currentUserData.categoriesWithPOIs as category (category._id)}
 						<div class="flex-none">
-							<CategoryItem {category} pois={category.pois} />
+							<CategoryItem {form} {category} pois={category.pois} />
 						</div>
 					{/each}
 				{:else}
@@ -49,7 +64,7 @@
 	<div class="flex gap-3">
 		{#if createPOIForm.visible}
 			<div class="grow">
-				<POIForm />
+				<POIForm {form} onCreate={handlePOICreated} />
 			</div>
 		{/if}
 		{#if addImageForm.visible}

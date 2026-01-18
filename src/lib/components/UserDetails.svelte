@@ -9,7 +9,7 @@
 			type="text"
 			class="form-control"
 			id="first-name"
-			name="first-name"
+			name="firstName"
 			placeholder="First Name"
 			required
 		/>
@@ -21,7 +21,7 @@
 			type="text"
 			class="form-control"
 			id="last-name"
-			name="last-name"
+			name="lastName"
 			placeholder="Last Name"
 			required
 		/>

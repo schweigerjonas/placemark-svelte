@@ -1,5 +1,5 @@
 <script lang="ts">
-	import "leaflet/dist/leaflet.css";
+	// import "leaflet/dist/leaflet.css";
 	import type { Control, Map as LeafletMap } from "leaflet";
 	import { onMount } from "svelte";
 	import { ToastType, type MarkerLayer, type MarkerSpec } from "$lib/types/types";
@@ -22,9 +22,25 @@
 	let overlays: Control.LayersObject = {};
 	let baseLayers: Control.LayersObject;
 	let L: typeof import("/home/jonas/repos/placemark-svelte/node_modules/@types/leaflet/index");
+	let selectionPopup: L.Popup | null = null;
+	let resolveMapReady: (value: boolean) => void;
+
+	const mapReady = new Promise((resolve) => {
+		resolveMapReady = resolve;
+	});
 
 	// contains POI data for all markers
 	const markerMap = new SvelteMap<L.Marker, MarkerSpec>();
+
+	$effect(() => {
+		if (!createPOIForm.visible && selectionPopup) {
+			selectionPopup.close();
+		}
+	});
+
+	export function ready() {
+		return mapReady;
+	}
 
 	export async function addMarker(lat: number, lng: number, popupText: string) {
 		const marker = L.marker({ lat, lng }).addTo(map);
@@ -34,8 +50,12 @@
 		marker.bindPopup(popup);
 	}
 
-	export async function moveTo(lat: number, lng: number) {
-		map.flyTo({ lat: lat, lng: lng });
+	export async function moveTo(lat: number, lng: number, zoomLevel?: number) {
+		if (map) {
+			map.flyTo({ lat: lat, lng: lng }, zoomLevel);
+		} else {
+			console.warn("moveTo called before map was initialized");
+		}
 	}
 
 	export async function populateLayer(layer: MarkerLayer) {
@@ -118,6 +138,9 @@
 			minZoom: minZoom,
 			layers: [defaultLayer]
 		});
+
+		resolveMapReady(true);
+
 		control = leaflet.control.layers(baseLayers, overlays).addTo(map);
 
 		if (markerLayers) {
@@ -128,11 +151,11 @@
 
 		map.on("click", (e: L.LeafletMouseEvent) => {
 			if (createPOIForm.visible) {
-				let popup = L.popup();
+				selectionPopup = L.popup();
 
 				createPOIForm.lat = e.latlng.lat.toString();
 				createPOIForm.lng = e.latlng.lng.toString();
-				popup.setLatLng(e.latlng).setContent(`Location selected`).openOn(map);
+				selectionPopup.setLatLng(e.latlng).setContent(`Location selected`).openOn(map);
 			}
 		});
 	});

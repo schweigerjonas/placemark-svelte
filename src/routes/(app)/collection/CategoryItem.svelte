@@ -1,35 +1,36 @@
 <script lang="ts">
+	import { enhance } from "$app/forms";
 	import { addImageForm, createPOIForm } from "$lib/runes.svelte";
-	import { service } from "$lib/services/service";
 	import { showToast } from "$lib/services/utils";
 	import { ToastType, type Category, type PointOfInterest } from "$lib/types/types";
+	import type { ActionData } from "./$types";
 
-	let { category = {} as Category, pois = [] as PointOfInterest[] } = $props();
+	let {
+		category = {} as Category,
+		pois = [] as PointOfInterest[],
+		form
+	}: { category: Category; pois: PointOfInterest[]; form: ActionData } = $props();
 
 	let isOpen = $state(false);
 
+	$effect(() => {
+		if (form?.deleteCategory?.success) {
+			showToast(form.deleteCategory.message, ToastType.Success, true);
+		} else if (form?.deleteCategory?.message) {
+			showToast(form.deleteCategory.message, ToastType.Danger, true);
+		}
+	});
+
+	$effect(() => {
+		if (form?.deletePOI?.success) {
+			showToast(form.deletePOI.message, ToastType.Success, true);
+		} else if (form?.deletePOI?.message) {
+			showToast(form.deletePOI.message, ToastType.Danger, true);
+		}
+	});
+
 	function toggle() {
 		isOpen = !isOpen;
-	}
-
-	async function deleteCategory(id: string, categoryTitle: string) {
-		const success = await service.deleteCategoryById(id);
-
-		if (success) {
-			showToast(`Category "${categoryTitle}" deleted.`, ToastType.Success, true);
-		} else {
-			showToast("Something went wrong.", ToastType.Danger, true);
-		}
-	}
-
-	async function deletePOI(id: string, poiName: string) {
-		const success = await service.deletePOIById(id);
-
-		if (success) {
-			showToast(`Point of Interest "${poiName}" deleted.`, ToastType.Success, true);
-		} else {
-			showToast("Something went wrong.", ToastType.Danger, true);
-		}
 	}
 
 	function showCreatePOIForm() {
@@ -56,13 +57,13 @@
 					>add_location_alt</span
 				>
 			</button>
-			<button
-				onclick={() => deleteCategory(category._id, category.title)}
-				class="pr-2"
-				type="button"
-			>
-				<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50">delete</span>
-			</button>
+			<form method="POST" action="?/deleteCategory" class="flex items-center" use:enhance>
+				<input type="hidden" name="categoryId" value={category._id} />
+				<input type="hidden" name="title" value={category.title} />
+				<button class="pr-2" type="submit">
+					<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50">delete</span>
+				</button>
+			</form>
 		</div>
 	</div>
 	{#if isOpen}
@@ -81,9 +82,15 @@
 								>add_photo_alternate</span
 							>
 						</button>
-						<button onclick={() => deletePOI(poi._id, poi.name)} type="button">
-							<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50">delete</span>
-						</button>
+						<form method="POST" action="?/deletePOI" class="flex items-center" use:enhance>
+							<input type="hidden" name="poiId" value={poi._id} />
+							<input type="hidden" name="name" value={poi.name} />
+							<button type="submit">
+								<span class="material-symbols-outlined rounded-lg p-2 hover:bg-slate-50"
+									>delete</span
+								>
+							</button>
+						</form>
 					</div>
 				</div>
 			{/each}

@@ -4,10 +4,22 @@ import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params }) => {
 	const poi = await service.getPOIById(params.id);
-	if (!poi) error(404);
+
+	if (!poi) {
+		throw error(404, "POI not found.");
+	}
 
 	const category = await service.getCategoryById(poi.categoryID);
-	if (!category) error(404);
+	if (!category) {
+		throw error(404, "Category not found.");
+	}
 
-	return { poi: poi, category: category };
+	const [categories, pois] = await Promise.all([service.getAllCategories(), service.getAllPOIs()]);
+
+	return {
+		category: category,
+		poi: poi,
+		categories: categories,
+		pois: pois
+	};
 };
