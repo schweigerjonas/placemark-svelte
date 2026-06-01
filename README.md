@@ -56,15 +56,3 @@ npm run dev -- --open
 ```
 
 The server will typically start on <http://localhost:5173>.
-
-## Deployment
-
-The application is deployed live at:
-
-> <https://placemark-sve.netlify.app/>
-
-The backend API is deployed live at:
-
-> <https://placemark-core.onrender.com/>
-
-_Note: In order for the frontend to work properly, it is necessary that the backend instance is spun up. This may take 1-2 minutes upon first visiting the website._
